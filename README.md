@@ -2,7 +2,34 @@
 
 Sistema de gestión para instalaciones deportivas con administración de atletas, competiciones, personal y pagos.
 
+---
+
 ## Tech Stack
+
+### Frontend
+<p>
+  <img src="https://img.shields.io/badge/%20-React-61DAFB?style=for-the-badge&logo=react&logoColor=white&labelColor=1E1E1E" alt="React" />
+  <img src="https://img.shields.io/badge/%20-TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white&labelColor=1E1E1E" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/%20-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white&labelColor=1E1E1E" alt="Vite" />
+  <img src="https://img.shields.io/badge/%20-Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white&labelColor=1E1E1E" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/%20-Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white&labelColor=1E1E1E" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/%20-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white&labelColor=1E1E1E" alt="Node.js" />
+</p>
+
+### Backend
+<p>
+  <img src="https://img.shields.io/badge/%20-Python-3776AB?style=for-the-badge&logo=python&logoColor=white&labelColor=1E1E1E" alt="Python" />
+  <img src="https://img.shields.io/badge/%20-Django-092E20?style=for-the-badge&logo=django&logoColor=white&labelColor=1E1E1E" alt="Django" />
+</p>
+
+### Base de Datos
+<p>
+  <img src="https://img.shields.io/badge/%20-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white&labelColor=1E1E1E" alt="PostgreSQL" />
+</p>
+
+---
+
+## Tech Stack (Detallado)
 
 ### Backend
 - **Python 3.12+**
