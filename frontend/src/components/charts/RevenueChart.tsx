@@ -1,11 +1,14 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { Invoice } from '../../types';
+import { useExchangeRate } from '../../hooks/useExchangeRate';
+import { formatBoth } from '../../services/rateService';
 
 interface RevenueChartProps {
   invoices: Invoice[];
 }
 
 export default function RevenueChart({ invoices }: RevenueChartProps) {
+  const { formatBoth } = useExchangeRate();
   const monthlyData = invoices.reduce<Record<string, number>>((acc, inv) => {
     const month = new Date(inv.created_at).toLocaleString('es', { month: 'short' });
     if (inv.status === 'paid') {
@@ -34,7 +37,7 @@ export default function RevenueChart({ invoices }: RevenueChartProps) {
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
         <XAxis dataKey="name" stroke="#869397" fontSize={12} tick={{ fill: '#869397' }} />
-        <YAxis stroke="#869397" fontSize={12} tick={{ fill: '#869397' }} tickFormatter={(v) => `$${v}`} />
+        <YAxis stroke="#869397" fontSize={12} tick={{ fill: '#869397' }} tickFormatter={(v) => (v >= 1000 ? `$${(v/1000).toFixed(1)}k` : `$${v}`)} />
         <Tooltip
           contentStyle={{
             backgroundColor: 'rgba(18, 33, 49, 0.95)',
@@ -42,7 +45,7 @@ export default function RevenueChart({ invoices }: RevenueChartProps) {
             borderRadius: '8px',
             color: '#d4e4fa',
           }}
-          formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Ingresos']}
+          formatter={(value: number) => [formatBoth(value), 'Ingresos']}
         />
         <Area
           type="monotone"

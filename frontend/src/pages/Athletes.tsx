@@ -146,7 +146,7 @@ export default function Athletes() {
             isLoading={searching}
             className="w-full sm:w-64"
           />
-          <div className="glass-panel rounded-lg p-1 flex items-center flex-wrap gap-1">
+          <div className="glass-panel mb-2 rounded-lg p-1 flex items-center flex-wrap gap-1">
             {['all', 'elite', 'pro', 'beginner'].map((f) => (
               <button
                 key={f}
@@ -171,6 +171,7 @@ export default function Athletes() {
             <Button
               variant="primary"
               icon="add"
+              className='mb-2'
               onClick={() => {
                 setSelectedAthlete(null);
                 setFormModalOpen(true);
@@ -220,7 +221,7 @@ export default function Athletes() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {athletes.map((athlete) => (
             <GlassCard
               key={athlete.id}
@@ -327,7 +328,7 @@ export default function Athletes() {
                       }}
                     ></div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-3">
                     <div className="bg-black/30 rounded-lg p-2 border border-white/5 text-center overflow-hidden">
                       <p className="text-xs text-on-surface-variant uppercase mb-1 truncate">Velocidad</p>
                       <p className="font-montserrat text-sm font-bold text-secondary-container">
@@ -381,7 +382,7 @@ export default function Athletes() {
 
           {isAdmin && (
             <div
-              className="glass-panel rounded-xl p-5 flex items-center justify-center border-dashed border-white/20 hover:border-primary/50 cursor-pointer transition-colors min-h-[160px]"
+              className="glass-panel rounded-xl p-6 flex items-center justify-center border-dashed border-white/20 hover:border-primary/50 cursor-pointer transition-colors min-h-[160px]"
               onClick={() => {
                 setSelectedAthlete(null);
                 setFormModalOpen(true);

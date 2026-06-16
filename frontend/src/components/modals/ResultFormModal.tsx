@@ -97,7 +97,7 @@ export default function ResultFormModal({ isOpen, onClose, onSuccess }: ResultFo
             <select
               value={competitionId}
               onChange={(e) => setCompetitionId(e.target.value ? Number(e.target.value) : '')}
-              className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
+              className="w-full bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-gray-300 font-inter focus:outline-none focus:border-primary transition-colors"
               required
             >
               <option value="">Seleccionar competición</option>
@@ -112,7 +112,7 @@ export default function ResultFormModal({ isOpen, onClose, onSuccess }: ResultFo
             <select
               value={athleteId}
               onChange={(e) => setAthleteId(e.target.value ? Number(e.target.value) : '')}
-              className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
+              className="w-full bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-gray-300 font-inter focus:outline-none focus:border-primary transition-colors"
               required
             >
               <option value="">Seleccionar atleta</option>

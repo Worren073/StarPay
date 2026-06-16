@@ -4,6 +4,8 @@ import StatusBadge from '../ui/StatusBadge';
 import { verifyProof } from '../../services/paymentService';
 import { showErrorToast } from '../../services/api';
 import { toast } from 'sonner';
+import { useExchangeRate } from '../../hooks/useExchangeRate';
+import { formatUSD } from '../../services/rateService';
 import type { PaymentProof } from '../../types';
 
 interface ProofReviewModalProps {
@@ -16,6 +18,7 @@ interface ProofReviewModalProps {
 
 export default function ProofReviewModal({ isOpen, onClose, proof, onVerified, invoiceType }: ProofReviewModalProps) {
   const [verifying, setVerifying] = useState(false);
+  const { rate } = useExchangeRate();
 
   const handleVerify = async () => {
     setVerifying(true);
@@ -85,6 +88,7 @@ export default function ProofReviewModal({ isOpen, onClose, proof, onVerified, i
             <p className="text-xs text-on-surface-variant font-inter mb-1">Monto en VES</p>
             <p className="text-sm text-on-surface font-inter font-medium">
               {parseFloat(proof.amount_ves).toLocaleString('es-ES', { minimumFractionDigits: 2 })} VES
+              {rate ? <span className="ml-1 text-on-surface-variant">({formatUSD(parseFloat(proof.amount_ves) / rate)})</span> : null}
             </p>
           </div>
           <div className="glass-panel rounded-lg p-3">

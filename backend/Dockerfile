@@ -5,4 +5,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 EXPOSE 8000
-CMD ["sh", "-c", "python manage.py migrate && python seed.py && uvicorn starpay_core.asgi:application --reload --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "python manage.py migrate && uvicorn starpay_core.asgi:application --reload --host 0.0.0.0 --port 8000"]

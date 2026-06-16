@@ -75,7 +75,7 @@ export default function InvoiceFormModal({ isOpen, onClose, invoice, onSuccess }
           <select
             value={athlete}
             onChange={(e) => setAthlete(e.target.value)}
-            className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-gray-300 font-inter focus:outline-none focus:border-primary transition-colors"
             required
           >
             <option value="">Seleccionar atleta</option>
@@ -113,7 +113,7 @@ export default function InvoiceFormModal({ isOpen, onClose, invoice, onSuccess }
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-gray-300 font-inter focus:outline-none focus:border-primary transition-colors"
           >
             <option value="pending">Pendiente</option>
             <option value="paid">Pagado</option>

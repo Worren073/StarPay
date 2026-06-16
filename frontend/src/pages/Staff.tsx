@@ -105,7 +105,7 @@ export default function Staff() {
   if (loading) {
     return (
       <>
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-2">
             <Skeleton className="w-64 h-8" />
             <Skeleton className="w-80 h-4" />

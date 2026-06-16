@@ -3,6 +3,8 @@ import type { AthletePlan } from '../../types';
 import { generateRenewalInvoice } from '../../services/athleteService';
 import { showErrorToast } from '../../services/api';
 import { toast } from 'sonner';
+import { useExchangeRate } from '../../hooks/useExchangeRate';
+import { formatBoth } from '../../services/rateService';
 import Icon from './Icon';
 
 interface PlanProgressBarProps {
@@ -15,6 +17,7 @@ interface PlanProgressBarProps {
 
 export default function PlanProgressBar({ plan, loading, athleteId, hasPendingRenewal, onRenew }: PlanProgressBarProps) {
   const [generating, setGenerating] = useState(false);
+  const { rate } = useExchangeRate();
 
   if (loading) {
     return (
@@ -76,7 +79,12 @@ export default function PlanProgressBar({ plan, loading, athleteId, hasPendingRe
     <div className="glass-panel rounded-xl p-5 space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-montserrat font-semibold text-on-surface">{plan.plan_name}</h3>
+          <h3 className="font-montserrat font-semibold text-on-surface">
+            {plan.plan_name}
+            {plan.plan_price && <span className="ml-2 text-sm text-on-surface-variant font-inter font-normal">
+              ({formatBoth(plan.plan_price, rate)})
+            </span>}
+          </h3>
           <p className={`text-xs font-inter mt-0.5 ${textColor}`}>
             {isExpired
               ? 'Plan vencido'

@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ExchangeRateProvider } from './context/ExchangeRateContext';
 import Layout from './components/layout/Layout';
 import PageTransition from './components/animations/PageTransition';
 import Login from './pages/Login';
@@ -240,10 +241,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <AuthProvider>
-          <AppRoutes />
-          <ThemeAwareToaster />
-        </AuthProvider>
+        <ExchangeRateProvider>
+          <AuthProvider>
+            <AppRoutes />
+            <ThemeAwareToaster />
+          </AuthProvider>
+        </ExchangeRateProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

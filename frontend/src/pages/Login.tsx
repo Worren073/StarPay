@@ -46,7 +46,7 @@ export default function Login() {
               <path d="M20 85 Q50 75 80 85" fill="none" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round" />
             </svg>
           </div>
-          <h1 className="font-montserrat text-2xl font-bold text-primary">StarPay</h1>
+          <h1 className="font-montserrat text-3xl md:text-5xl font-bold text-primary">StarPay</h1>
           <p className="text-on-surface-variant mt-1 font-inter">Gestión de Rendimiento Élite</p>
         </div>
 

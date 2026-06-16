@@ -121,7 +121,7 @@ export default function AthletePerformance() {
 
       {/* Current Stats */}
       {profile && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass-panel rounded-xl p-4 text-center">
             <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">Velocidad</p>
             <p className="font-montserrat text-3xl font-bold text-secondary-container">{profile.speed_score}</p>

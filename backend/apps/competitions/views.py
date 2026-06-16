@@ -9,6 +9,8 @@ from .serializers import (
     CompetitionAthleteSerializer,
     CompetitionCoachSerializer,
 )
+from apps.notifications.views import send_notification
+from apps.users.models import User
 
 
 class IsAdminOrCoach(permissions.BasePermission):
@@ -131,6 +133,56 @@ class CompetitionViewSet(viewsets.ModelViewSet):
 
         qs = competition.assigned_athletes.all().select_related('athlete')
         serializer = CompetitionAthleteSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def respond(self, request, pk=None):
+        competition = self.get_object()
+        action = request.data.get('action')
+
+        if action not in ('accept', 'decline'):
+            return Response({'error': 'action debe ser "accept" o "decline"'}, status=status.HTTP_400_BAD_REQUEST)
+
+        from apps.athletes.models import Athlete
+        try:
+            athlete = Athlete.objects.get(user=request.user)
+        except Athlete.DoesNotExist:
+            return Response({'error': 'Solo atletas pueden responder invitaciones'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            ca = CompetitionAthlete.objects.get(competition=competition, athlete=athlete)
+        except CompetitionAthlete.DoesNotExist:
+            return Response({'error': 'No estás invitado a esta competencia'}, status=status.HTTP_404_NOT_FOUND)
+
+        if ca.status != 'invited':
+            return Response({'error': f'Ya has {dict(CompetitionAthlete.STATUS_CHOICES).get(ca.status, ca.status)} esta invitación'}, status=status.HTTP_400_BAD_REQUEST)
+
+        ca.status = 'confirmed' if action == 'accept' else 'declined'
+        ca.save(update_fields=['status'])
+
+        action_label = 'aceptado' if action == 'accept' else 'rechazado'
+        admins = User.objects.filter(role='admin')
+        coaches = athlete.coaches.all()
+        for staff in coaches:
+            if staff.user:
+                send_notification(
+                    user=staff.user,
+                    notification_type='competition_response',
+                    title=f'Invitación {action_label}',
+                    message=f'{athlete.name} ha {action_label} la invitación a "{competition.name}"',
+                    link='/competitions',
+                )
+        for admin in admins:
+            if admin not in [c.user for c in coaches if c.user]:
+                send_notification(
+                    user=admin,
+                    notification_type='competition_response',
+                    title=f'Invitación {action_label}',
+                    message=f'{athlete.name} ha {action_label} la invitación a "{competition.name}"',
+                    link='/competitions',
+                )
+
+        serializer = CompetitionAthleteSerializer(ca)
         return Response(serializer.data)
 
     @action(detail=True, methods=['get', 'post'], url_path='coaches')

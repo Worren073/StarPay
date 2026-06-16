@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -12,32 +12,37 @@ import AthleteFormModal from '../components/modals/AthleteFormModal';
 import CompetitionFormModal from '../components/modals/CompetitionFormModal';
 import { getAthletes } from '../services/athleteService';
 import { getCompetitions } from '../services/competitionService';
-import { getInvoices } from '../services/paymentService';
-import type { Athlete, Invoice } from '../types';
+import { getInvoices, getTransactions } from '../services/paymentService';
+import type { Athlete, Invoice, Transaction } from '../types';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
+import { useExchangeRate } from '../hooks/useExchangeRate';
 
 export default function Home() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [compCount, setCompCount] = useState(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [athleteModalOpen, setAthleteModalOpen] = useState(false);
   const [competitionModalOpen, setCompetitionModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { formatBoth } = useExchangeRate();
   const isAdmin = user?.role === 'admin';
 
   const loadData = async () => {
     try {
-      const [athletesData, invoicesData, compsData] = await Promise.all([
+      const [athletesData, invoicesData, compsData, txnData] = await Promise.all([
         getAthletes(),
         getInvoices(),
         getCompetitions({ status: 'upcoming' }),
+        getTransactions(),
       ]);
       setAthletes(athletesData);
       setInvoices(invoicesData);
       setCompCount(compsData.length);
+      setTransactions(txnData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -55,11 +60,73 @@ export default function Home() {
     .filter((i) => i.status === 'pending')
     .reduce((sum, i) => sum + parseFloat(i.amount), 0);
 
-  const recentActivity = [
-    { icon: 'person_add', color: 'text-primary', bg: 'bg-primary/10', text: 'Nueva inscripción: Sofía R.', sub: 'Hace 2 horas · Programa Élite', badge: 'Activo', badgeVariant: 'active' as const },
-    { icon: 'payments', color: 'text-secondary', bg: 'bg-secondary/10', text: 'Pago recibido: Juan M.', sub: 'Hace 5 horas · Cuota mensual', amount: '+$450.00' },
-    { icon: 'update', color: 'text-on-surface-variant', bg: 'bg-surface-variant', text: 'Horario actualizado: Clasificatorias Regionales', sub: 'Ayer · Actualización automática' },
-  ];
+  const timeAgo = (dateStr: string) => {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return 'Ahora';
+    if (diffMins < 60) return `Hace ${diffMins} min`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Ayer';
+    if (diffDays < 30) return `Hace ${diffDays} días`;
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  };
+
+  const recentActivity = useMemo(() => {
+    const items: {
+      icon: string; color: string; bg: string; text: string; sub: string; badge?: string; badgeVariant?: 'active' | 'positive' | 'warning' | 'error'; amount?: string;
+    }[] = [];
+
+    transactions
+      .filter((t) => t.status === 'paid')
+      .slice(0, 5)
+      .forEach((t) => {
+        items.push({
+          icon: 'payments',
+          color: 'text-secondary',
+          bg: 'bg-secondary/10',
+          text: `Pago recibido: ${t.reference}`,
+          sub: `${timeAgo(t.processed_at)} · ${t.method}`,
+          amount: `+${formatBoth(parseFloat(t.amount))}`.split(' (')[0],
+        });
+      });
+
+    athletes
+      .slice()
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 3)
+      .forEach((a) => {
+        items.push({
+          icon: 'person_add',
+          color: 'text-primary',
+          bg: 'bg-primary/10',
+          text: `Nueva inscripción: ${a.name}`,
+          sub: `${timeAgo(a.created_at)} · Nivel ${a.level}`,
+          badge: a.status === 'active' ? 'Activo' : undefined,
+          badgeVariant: 'active',
+        });
+      });
+
+    items.sort((a, b) => {
+      const getTime = (sub: string) => {
+        if (sub.startsWith('Ahora')) return 0;
+        const m = sub.match(/Hace (\d+) min/);
+        if (m) return parseInt(m[1]) * 60000;
+        const h = sub.match(/Hace (\d+) hora/);
+        if (h) return parseInt(h[1]) * 3600000;
+        if (sub.startsWith('Ayer')) return 86400000;
+        const d = sub.match(/Hace (\d+) días/);
+        if (d) return parseInt(d[1]) * 86400000;
+        return Infinity;
+      };
+      return getTime(a.sub) - getTime(b.sub);
+    });
+
+    return items.slice(0, 10);
+  }, [transactions, athletes, formatBoth]);
 
   const handleExportReport = () => {
     const reportData = {
@@ -110,7 +177,7 @@ export default function Home() {
             <Skeleton className="w-36 h-12" />
           </div>
         </header>
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 md:mb-10">
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => <Skeleton key={i} variant="card" className="h-40" />)}
           </div>
@@ -131,7 +198,7 @@ export default function Home() {
           </h1>
           <p className="font-inter text-lg text-on-surface-variant">Aquí está tu resumen de rendimiento de hoy.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-4">
           {isAdmin && (
             <Button variant="ghost" icon="add" onClick={() => setAthleteModalOpen(true)}>Agregar atleta</Button>
           )}
@@ -151,7 +218,7 @@ export default function Home() {
           />
           <MetricCard
             title="Pagos pendientes"
-            value={`$${(pendingAmount / 1000).toFixed(1)}k`}
+            value={pendingAmount > 0 ? formatBoth(pendingAmount).split(' (')[0] : '$0'}
             icon="account_balance_wallet"
             color="text-on-surface"
             subtitle={`${pendingPayments} facturas pendientes`}
@@ -234,7 +301,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="md:col-span-4 glass-panel rounded-xl overflow-hidden relative min-h-[300px]">
+        <div className="md:col-span-4 glass-panel mb-6 rounded-xl overflow-hidden relative min-h-[300px]">
           <div className="absolute inset-0 bg-gradient-to-br from-surface-container-low to-surface-container z-0"></div>
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #4cd7f6 0, #4cd7f6 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }}></div>
           <div className="relative z-10 p-6 flex flex-col h-full justify-end">
@@ -253,7 +320,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 md:mb-10">
         <div className="lg:col-span-2 glass-panel p-6 rounded-xl">
           <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Tendencia de ingresos</h3>
           <RevenueChart invoices={invoices} />
@@ -264,7 +331,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="glass-panel p-6 rounded-xl">
+      <div className="glass-panel p-6 rounded-xl mb-4 md:mb-6">
         <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Atletas por nivel</h3>
         <AthletesByLevelChart athletes={athletes} />
       </div>

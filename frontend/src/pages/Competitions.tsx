@@ -115,7 +115,7 @@ export default function Competitions() {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h2 className="font-montserrat text-2xl md:text-3xl font-semibold text-on-surface">Competencias</h2>
           <p className="font-inter text-base text-on-surface-variant mt-1">Gestiona eventos, registra resultados y monitorea la preparación de los atletas.</p>
@@ -125,18 +125,19 @@ export default function Competitions() {
             <Button
               variant="ghost"
               icon="emoji_events"
+              className='mb-4'
               onClick={() => setResultModalOpen(true)}
             >
               Registrar resultado
             </Button>
           )}
           {isAdmin && (
-            <Button variant="primary" icon="add" onClick={() => { setSelectedCompetition(null); setFormModalOpen(true); }}>Nuevo evento</Button>
+            <Button variant="primary" className='mb-4' icon="add" onClick={() => { setSelectedCompetition(null); setFormModalOpen(true); }}>Nuevo evento</Button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 flex flex-col gap-6">
           <div className="flex items-center justify-between glass-panel px-6 py-4 rounded-xl">
             <h3 className="font-montserrat text-xl font-semibold text-on-surface flex items-center gap-2">

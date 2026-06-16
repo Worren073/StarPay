@@ -4,6 +4,7 @@ import Icon from '../ui/Icon';
 import { submitPayment } from '../../services/paymentService';
 import { showErrorToast } from '../../services/api';
 import { toast } from 'sonner';
+import { useExchangeRate } from '../../hooks/useExchangeRate';
 import type { Invoice } from '../../types';
 
 interface PaymentModalProps {
@@ -28,6 +29,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
   const [bankOrigin, setBankOrigin] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { formatBoth } = useExchangeRate();
 
   const handleIdTypeChange = useCallback((newType: 'V' | 'E' | 'J') => {
     setIdType(newType);
@@ -86,7 +88,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
         <div className="glass-panel rounded-lg p-4 space-y-1">
           <p className="text-sm text-on-surface-variant font-inter">Factura #{invoice.id}</p>
           <p className="text-lg font-montserrat font-bold text-on-surface">
-            ${invoice.amount} {invoice.description && `- ${invoice.description}`}
+            {formatBoth(invoice.amount)} {invoice.description && `- ${invoice.description}`}
           </p>
         </div>
 
@@ -148,7 +150,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
             <select
               value={idType}
               onChange={(e) => handleIdTypeChange(e.target.value as 'V' | 'E' | 'J')}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-on-surface font-inter text-sm focus:outline-none focus:border-primary"
+              className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-white/10 text-gray-300 font-inter text-sm focus:outline-none focus:border-primary"
             >
               <option value="V">Venezolana</option>
               <option value="E">Extranjera</option>
@@ -188,14 +190,36 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
             <label className="block text-xs font-inter text-on-surface-variant mb-1">
               Banco de origen
             </label>
-            <input
-              type="text"
+            <select
               value={bankOrigin}
               onChange={(e) => setBankOrigin(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-on-surface font-inter text-sm focus:outline-none focus:border-primary"
-              placeholder="Banco de Venezuela"
-              maxLength={100}
-            />
+              className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-white/10 text-gray-300 font-inter text-sm focus:outline-none focus:border-primary"
+              required
+            >
+              <option value="">Selecciona un banco</option>
+              <option value="Banco de Venezuela">Banco de Venezuela</option>
+              <option value="Banesco">Banesco</option>
+              <option value="BBVA Provincial">BBVA Provincial</option>
+              <option value="Mercantil">Mercantil</option>
+              <option value="Banco Nacional de Crédito">Banco Nacional de Crédito</option>
+              <option value="Banco Exterior">Banco Exterior</option>
+              <option value="Banco del Tesoro">Banco del Tesoro</option>
+              <option value="Banco Bicentenario">Banco Bicentenario</option>
+              <option value="Bancamarca">Bancamarca</option>
+              <option value="Banco Activo">Banco Activo</option>
+              <option value="Bancaribe">Bancaribe</option>
+              <option value="Banco Plaza">Banco Plaza</option>
+              <option value="Banco Sofitasa">Banco Sofitasa</option>
+              <option value="Banco Federal">Banco Federal</option>
+              <option value="BOD (Banco Occidental de Descuento)">BOD (Banco Occidental de Descuento)</option>
+              <option value="100% Banco">100% Banco</option>
+              <option value="Banco Fondo Común">Banco Fondo Común</option>
+              <option value="Banco Venezolano de Crédito">Banco Venezolano de Crédito</option>
+              <option value="Banco Caroní">Banco Caroní</option>
+              <option value="Bancrecer">Bancrecer</option>
+              <option value="Bandes">Bandes</option>
+              <option value="Otro">Otro</option>
+            </select>
           </div>
         </div>
 

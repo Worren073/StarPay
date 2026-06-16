@@ -6,6 +6,7 @@ import PlanProgressBar from '../../components/ui/PlanProgressBar';
 import PaymentModal from '../../components/modals/PaymentModal';
 import { getMyPayments, getMyPlan } from '../../services/athleteService';
 import { showErrorToast } from '../../services/api';
+import { useExchangeRate } from '../../hooks/useExchangeRate';
 import type { Invoice, AthletePlan } from '../../types';
 
 export default function AthletePayments() {
@@ -14,6 +15,7 @@ export default function AthletePayments() {
   const [planLoading, setPlanLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [payingInvoice, setPayingInvoice] = useState<Invoice | null>(null);
+  const { formatBoth } = useExchangeRate();
 
   const loadData = () => {
     setLoading(true);
@@ -101,7 +103,7 @@ export default function AthletePayments() {
                 </div>
                 <div className="text-right flex items-center gap-3">
                   <div>
-                    <p className="font-montserrat font-bold text-lg text-on-surface">${inv.amount}</p>
+                    <p className="font-montserrat font-bold text-lg text-on-surface">{formatBoth(inv.amount)}</p>
                     <StatusBadge
                       label={statusLabels[inv.status] || inv.status}
                       variant={inv.status as any}
@@ -137,7 +139,7 @@ export default function AthletePayments() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-montserrat font-bold text-lg text-on-surface">${inv.amount}</p>
+                  <p className="font-montserrat font-bold text-lg text-on-surface">{formatBoth(inv.amount)}</p>
                   <StatusBadge label="Pagado" variant="paid" />
                 </div>
               </div>

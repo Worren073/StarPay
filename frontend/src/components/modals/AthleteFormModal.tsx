@@ -120,7 +120,7 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
             <select
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
+              className="w-full bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-gray-300 font-inter focus:outline-none focus:border-primary transition-colors"
             >
               <option value="elite">Élite</option>
               <option value="pro">Profesional</option>

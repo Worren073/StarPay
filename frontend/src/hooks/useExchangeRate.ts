@@ -1,0 +1,1 @@
+export { useExchangeRate } from '../context/ExchangeRateContext';

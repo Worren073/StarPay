@@ -7,10 +7,13 @@ import Button from '../components/ui/Button';
 import InvoiceFormModal from '../components/modals/InvoiceFormModal';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
 import ProofReviewModal from '../components/modals/ProofReviewModal';
-import { getInvoices, getPaymentSummary, getTransactions, getInvoiceProofs, submitCashPayment } from '../services/paymentService';
+import ConfirmModal from '../components/ui/ConfirmModal';
+import { getInvoices, getPaymentSummary, getTransactions, getInvoiceProofs, submitCashPayment, deleteInvoice } from '../services/paymentService';
 import type { Invoice, PaymentSummary, Transaction, PaymentProof } from '../types';
+import InvoiceDetailModal from '../components/modals/InvoiceDetailModal';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
+import { useExchangeRate } from '../hooks/useExchangeRate';
 
 export default function Payments() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -25,7 +28,11 @@ export default function Payments() {
   const [reviewInvoiceType, setReviewInvoiceType] = useState<string>('other');
   const [proofsByInvoice, setProofsByInvoice] = useState<Record<number, PaymentProof[]>>({});
   const [collectingInvoice, setCollectingInvoice] = useState<number | null>(null);
+  const [cashConfirmInvoice, setCashConfirmInvoice] = useState<Invoice | null>(null);
+  const [detailInvoice, setDetailInvoice] = useState<Invoice | null>(null);
+  const [detailProofs, setDetailProofs] = useState<PaymentProof[]>([]);
   const { user } = useAuth();
+  const { formatBoth } = useExchangeRate();
   const isAdmin = user?.role === 'admin';
 
   const loadData = async () => {
@@ -71,6 +78,7 @@ export default function Payments() {
     if (!selectedInvoice) return;
     setDeleteLoading(true);
     try {
+      await deleteInvoice(selectedInvoice.id);
       toast.success('Factura eliminada correctamente');
       loadData();
     } catch {
@@ -82,17 +90,20 @@ export default function Payments() {
     }
   };
 
-  const handleProofClick = async (invoice: Invoice) => {
+  const handleCardClick = async (invoice: Invoice) => {
     const proofs = await getInvoiceProofs(invoice.id);
     const pending = proofs.find((p) => p.status === 'pending');
     if (pending) {
       setReviewProof(pending);
       setReviewInvoiceType(invoice.invoice_type);
+    } else {
+      setDetailProofs(proofs);
+      setDetailInvoice(invoice);
     }
   };
 
   const handleCashCollect = async (invoice: Invoice) => {
-    if (!confirm(`¿Cobrar $${invoice.amount} en efectivo por "${invoice.description}"? Esto renovará el plan automáticamente.`)) return;
+    setCashConfirmInvoice(null);
     setCollectingInvoice(invoice.id);
     try {
       await submitCashPayment(invoice.id, {
@@ -121,7 +132,7 @@ export default function Payments() {
           <Skeleton className="w-56 h-10" />
           <Skeleton className="w-96 h-4" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => <Skeleton key={i} variant="card" className="h-32" />)}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -136,7 +147,7 @@ export default function Payments() {
 
   return (
     <>
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-start">
         <div>
           <h1 className="font-montserrat text-3xl md:text-5xl font-bold text-on-background mb-2">Resumen de pagos</h1>
           <p className="font-inter text-base text-on-surface-variant">Gestiona ingresos, facturas pendientes y ciclos de facturación.</p>
@@ -154,7 +165,7 @@ export default function Payments() {
           </div>
           <div>
             <div className="font-montserrat text-3xl md:text-5xl font-bold text-secondary-container mb-1">
-              ${summary?.total_collected.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatBoth(summary?.total_collected ?? 0)}
             </div>
           </div>
         </GlassCard>
@@ -166,7 +177,7 @@ export default function Payments() {
           </div>
           <div>
             <div className="font-montserrat text-2xl font-bold text-on-surface mb-1">
-              ${summary?.outstanding.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatBoth(summary?.outstanding ?? 0)}
             </div>
             <div className="text-xs text-on-surface-variant flex items-center font-inter">
               <Icon name="schedule" className="w-4 h-4 mr-1" />
@@ -182,13 +193,13 @@ export default function Payments() {
           </div>
           <div>
             <div className="font-montserrat text-2xl font-bold text-error mb-1">
-              ${summary?.overdue_amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              {formatBoth(summary?.overdue_amount ?? 0)}
             </div>
           </div>
         </GlassCard>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <GlassCard className="lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <h2 className="font-montserrat text-xl font-semibold text-on-surface">Transacciones recientes</h2>
@@ -199,12 +210,8 @@ export default function Payments() {
               return (
                 <div
                   key={invoice.id}
-                  onClick={() => hasPendingProof ? handleProofClick(invoice) : undefined}
-                  className={`flex items-center justify-between p-3 rounded-lg transition-colors border ${
-                    hasPendingProof
-                      ? 'bg-amber-500/5 border-amber-500/30 hover:bg-amber-500/10 cursor-pointer'
-                      : 'border-transparent hover:bg-white/5 hover:border-white/10'
-                  }`}
+                  onClick={() => handleCardClick(invoice)}
+                  className="flex items-center justify-between p-3 rounded-lg transition-colors border cursor-pointer hover:bg-white/5 hover:border-white/10"
                 >
                   <div className="flex items-center gap-3">
                     {hasPendingProof && (
@@ -229,7 +236,7 @@ export default function Payments() {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <div className="font-inter text-sm text-on-surface">${parseFloat(invoice.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                      <div className="font-inter text-sm text-on-surface">{formatBoth(invoice.amount)}</div>
                       <StatusBadge
                         label={invoice.status === 'paid' ? 'Pagado' : invoice.status === 'pending' ? 'Pendiente' : 'Vencido'}
                         variant={invoice.status as 'paid' | 'pending' | 'overdue'}
@@ -242,7 +249,7 @@ export default function Payments() {
                     )}
                     {isAdmin && !hasPendingProof && invoice.invoice_type === 'plan_renewal' && invoice.status === 'pending' && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); handleCashCollect(invoice); }}
+                        onClick={(e) => { e.stopPropagation(); setCashConfirmInvoice(invoice); }}
                         disabled={collectingInvoice === invoice.id}
                         className="px-3 py-1.5 rounded-md bg-emerald-500/20 text-emerald-400 text-xs font-inter font-semibold hover:bg-emerald-500/30 transition-colors disabled:opacity-50 flex items-center gap-1"
                       >
@@ -277,7 +284,7 @@ export default function Payments() {
               <div key={txn.id} className="p-3 rounded-lg bg-surface-container-high/50 border border-white/5">
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-inter text-sm text-on-surface font-medium">{txn.reference}</span>
-                  <span className="font-inter text-sm text-on-surface font-semibold">${parseFloat(txn.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                  <span className="font-inter text-sm text-on-surface font-semibold">{formatBoth(txn.amount)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-on-surface-variant font-inter">{txn.method}</span>
@@ -295,6 +302,22 @@ export default function Payments() {
         invoice={selectedInvoice}
         onSuccess={loadData}
       />
+
+      {detailInvoice && (
+        <InvoiceDetailModal
+          isOpen={!!detailInvoice}
+          onClose={() => setDetailInvoice(null)}
+          invoice={detailInvoice}
+          proofs={detailProofs}
+          isAdmin={isAdmin}
+          onDelete={() => {
+            const inv = detailInvoice;
+            setDetailInvoice(null);
+            setSelectedInvoice(inv);
+            setDeleteModalOpen(true);
+          }}
+        />
+      )}
 
       <ConfirmDeleteModal
         isOpen={deleteModalOpen}
@@ -314,6 +337,18 @@ export default function Payments() {
           invoiceType={reviewInvoiceType}
         />
       )}
+
+      <ConfirmModal
+        isOpen={!!cashConfirmInvoice}
+        onClose={() => setCashConfirmInvoice(null)}
+        onConfirm={() => cashConfirmInvoice && handleCashCollect(cashConfirmInvoice)}
+        title="Cobrar en efectivo"
+        message={`¿Cobrar ${cashConfirmInvoice ? formatBoth(cashConfirmInvoice.amount) : ''} en efectivo por "${cashConfirmInvoice?.description}"? Esto renovará el plan automáticamente.`}
+        confirmLabel="Cobrar y renovar"
+        variant="warning"
+        icon="question"
+        loading={!!collectingInvoice}
+      />
     </>
   );
 }

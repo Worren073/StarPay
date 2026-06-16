@@ -58,3 +58,8 @@ export const addCompetitionAthlete = async (competitionId: number, athleteId: nu
 export const removeCompetitionAthlete = async (competitionId: number, athleteId: number): Promise<void> => {
   await api.delete(`/competitions/${competitionId}/athletes/`, { data: { athlete_id: athleteId } });
 };
+
+export const respondToCompetition = async (competitionId: number, action: 'accept' | 'decline'): Promise<import('../types').CompetitionAthlete> => {
+  const response = await api.post(`/competitions/${competitionId}/respond/`, { action });
+  return response.data;
+};

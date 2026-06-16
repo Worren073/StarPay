@@ -117,7 +117,7 @@ export interface CompetitionAthlete {
   competition: number;
   athlete: number;
   athlete_name: string;
-  status: 'invited' | 'confirmed' | 'participated';
+  status: 'invited' | 'confirmed' | 'participated' | 'declined';
 }
 
 export interface CompetitionCoach {
@@ -155,7 +155,7 @@ export interface PaymentProof {
   id: number;
   invoice: number;
   invoice_number: number;
-  method: 'pago_movil' | 'transferencia';
+  method: 'pago_movil' | 'transferencia' | 'cash';
   phone: string;
   id_type: 'V' | 'E' | 'J';
   id_number: string;

@@ -49,6 +49,7 @@ class CompetitionAthlete(models.Model):
         ('invited', 'Invitado'),
         ('confirmed', 'Confirmado'),
         ('participated', 'Participó'),
+        ('declined', 'Declinado'),
     )
 
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='assigned_athletes')

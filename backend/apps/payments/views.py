@@ -120,6 +120,18 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         return Response(PaymentProofSerializer(proof).data)
 
+    def destroy(self, request, *args, **kwargs):
+        invoice = self.get_object()
+        if invoice.athlete.user:
+            send_notification(
+                user=invoice.athlete.user,
+                notification_type='payment_rejected',
+                title='Factura eliminada',
+                message=f'Tu factura #{invoice.id} por ${invoice.amount} ha sido eliminada por el administrador',
+                link='/athlete/payments',
+            )
+        return super().destroy(request, *args, **kwargs)
+
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Transaction.objects.select_related('invoice')

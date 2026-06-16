@@ -60,3 +60,7 @@ export const getPaymentSummary = async (): Promise<PaymentSummary> => {
   const response = await api.get('/payments/summary/');
   return response.data;
 };
+
+export const deleteInvoice = async (id: number): Promise<void> => {
+  await api.delete(`/payments/invoices/${id}/`);
+};
