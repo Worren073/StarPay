@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Icon from '../ui/Icon';
 
-export const navItems = [
+export const adminNavItems = [
   { path: '/', icon: 'home', label: 'Inicio' },
   { path: '/payments', icon: 'payments', label: 'Pagos' },
   { path: '/athletes', icon: 'group', label: 'Atletas' },
@@ -10,9 +10,17 @@ export const navItems = [
   { path: '/staff', icon: 'badge', label: 'Personal' },
 ];
 
+export const athleteNavItems = [
+  { path: '/athlete/pagos', icon: 'payments', label: 'Mis Pagos' },
+  { path: '/athlete/rendimiento', icon: 'trending_up', label: 'Rendimiento' },
+  { path: '/athlete/competencias', icon: 'emoji_events', label: 'Competencias' },
+];
+
 export default function Sidebar() {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+  const isAthlete = user?.role === 'athlete';
+  const navItems = isAthlete ? athleteNavItems : adminNavItems;
 
   return (
     <aside className="hidden md:flex flex-col h-full py-6 px-4 fixed left-4 top-4 bottom-4 w-sidebar-collapsed hover:w-sidebar-expanded transition-all duration-300 rounded-xl backdrop-blur-md bg-white/5 border border-white/10 shadow-2xl z-50 group">

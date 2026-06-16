@@ -6,8 +6,9 @@ import Skeleton from '../components/ui/Skeleton';
 import Button from '../components/ui/Button';
 import InvoiceFormModal from '../components/modals/InvoiceFormModal';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
-import { getInvoices, getPaymentSummary, getTransactions } from '../services/paymentService';
-import type { Invoice, PaymentSummary, Transaction } from '../types';
+import ProofReviewModal from '../components/modals/ProofReviewModal';
+import { getInvoices, getPaymentSummary, getTransactions, getInvoiceProofs, submitCashPayment } from '../services/paymentService';
+import type { Invoice, PaymentSummary, Transaction, PaymentProof } from '../types';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +21,10 @@ export default function Payments() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [reviewProof, setReviewProof] = useState<PaymentProof | null>(null);
+  const [reviewInvoiceType, setReviewInvoiceType] = useState<string>('other');
+  const [proofsByInvoice, setProofsByInvoice] = useState<Record<number, PaymentProof[]>>({});
+  const [collectingInvoice, setCollectingInvoice] = useState<number | null>(null);
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
@@ -33,6 +38,24 @@ export default function Payments() {
       setInvoices(invData);
       setSummary(summaryData);
       setTransactions(txnData);
+
+      // Fetch proofs for pending invoices
+      const pendingInvs = invData.filter((inv) => inv.status === 'pending');
+      if (pendingInvs.length > 0) {
+        const results = await Promise.allSettled(
+          pendingInvs.map((inv) => getInvoiceProofs(inv.id))
+        );
+        const map: Record<number, PaymentProof[]> = {};
+        pendingInvs.forEach((inv, i) => {
+          if (results[i].status === 'fulfilled') {
+            const proofs = (results[i] as PromiseFulfilledResult<PaymentProof[]>).value;
+            if (proofs.length > 0) map[inv.id] = proofs;
+          }
+        });
+        setProofsByInvoice(map);
+      } else {
+        setProofsByInvoice({});
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -43,7 +66,6 @@ export default function Payments() {
   useEffect(() => {
     loadData();
   }, []);
-
 
   const confirmDelete = async () => {
     if (!selectedInvoice) return;
@@ -57,6 +79,38 @@ export default function Payments() {
       setDeleteLoading(false);
       setDeleteModalOpen(false);
       setSelectedInvoice(null);
+    }
+  };
+
+  const handleProofClick = async (invoice: Invoice) => {
+    const proofs = await getInvoiceProofs(invoice.id);
+    const pending = proofs.find((p) => p.status === 'pending');
+    if (pending) {
+      setReviewProof(pending);
+      setReviewInvoiceType(invoice.invoice_type);
+    }
+  };
+
+  const handleCashCollect = async (invoice: Invoice) => {
+    if (!confirm(`¿Cobrar $${invoice.amount} en efectivo por "${invoice.description}"? Esto renovará el plan automáticamente.`)) return;
+    setCollectingInvoice(invoice.id);
+    try {
+      await submitCashPayment(invoice.id, {
+        method: 'cash',
+        phone: '0000000000',
+        id_type: 'V',
+        id_number: '00000000',
+        amount_ves: invoice.amount,
+        reference: 'EFECTIVO',
+        bank_origin: 'Efectivo',
+      });
+      toast.success('Pago en efectivo registrado y plan renovado');
+      loadData();
+    } catch (err) {
+      const msg = (err as any)?.response?.data?.error || (err as any)?.response?.data && Object.values((err as any).response.data)[0]?.[0] || 'Error al procesar pago en efectivo';
+      toast.error(msg);
+    } finally {
+      setCollectingInvoice(null);
     }
   };
 
@@ -140,35 +194,77 @@ export default function Payments() {
             <h2 className="font-montserrat text-xl font-semibold text-on-surface">Transacciones recientes</h2>
           </div>
           <div className="space-y-4">
-            {invoices.map((invoice) => (
-              <div key={invoice.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary-container font-inter text-sm mr-3 border border-white/5">
-                    {invoice.athlete_name.split(' ').map((n) => n[0]).join('')}
-                  </div>
-                  <div>
-                    <div className="font-inter text-sm text-on-surface">{invoice.athlete_name}</div>
-                    <div className="text-xs text-on-surface-variant font-inter">FAC-{invoice.id.toString().padStart(5, '0')}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <div className="font-inter text-sm text-on-surface">${parseFloat(invoice.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                    <StatusBadge
-                      label={invoice.status === 'paid' ? 'Pagado' : invoice.status === 'pending' ? 'Pendiente' : 'Vencido'}
-                      variant={invoice.status as 'paid' | 'pending' | 'overdue'}
-                    />
-                  </div>
-                  {isAdmin && (
-                    <div className="flex gap-1 ml-2">
-                      <button onClick={() => { setSelectedInvoice(invoice); setFormModalOpen(true); }} className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-                        <Icon name="settings" className="w-4 h-4" />
-                      </button>
+            {invoices.map((invoice) => {
+              const hasPendingProof = proofsByInvoice[invoice.id]?.some((p) => p.status === 'pending');
+              return (
+                <div
+                  key={invoice.id}
+                  onClick={() => hasPendingProof ? handleProofClick(invoice) : undefined}
+                  className={`flex items-center justify-between p-3 rounded-lg transition-colors border ${
+                    hasPendingProof
+                      ? 'bg-amber-500/5 border-amber-500/30 hover:bg-amber-500/10 cursor-pointer'
+                      : 'border-transparent hover:bg-white/5 hover:border-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {hasPendingProof && (
+                      <div className="relative">
+                        <div className="w-3 h-3 bg-amber-500 rounded-full animate-pulse" />
+                      </div>
+                    )}
+                    <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary-container font-inter text-sm border border-white/5">
+                       {invoice.athlete_name.split(' ').map((n) => n[0]).join('')}
                     </div>
-                  )}
+                    <div>
+                      <div className="font-inter text-sm text-on-surface">{invoice.athlete_name}</div>
+                      <div className="text-xs text-on-surface-variant font-inter">
+                        FAC-{invoice.id.toString().padStart(5, '0')}
+                        {invoice.invoice_type === 'plan_renewal' && (
+                          <span className="ml-2 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-semibold">
+                            Renovación
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="font-inter text-sm text-on-surface">${parseFloat(invoice.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                      <StatusBadge
+                        label={invoice.status === 'paid' ? 'Pagado' : invoice.status === 'pending' ? 'Pendiente' : 'Vencido'}
+                        variant={invoice.status as 'paid' | 'pending' | 'overdue'}
+                      />
+                    </div>
+                    {isAdmin && hasPendingProof && (
+                      <div className="px-2 py-1 rounded-md bg-amber-500/20 text-amber-400 text-xs font-inter font-semibold whitespace-nowrap">
+                        Revisar
+                      </div>
+                    )}
+                    {isAdmin && !hasPendingProof && invoice.invoice_type === 'plan_renewal' && invoice.status === 'pending' && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleCashCollect(invoice); }}
+                        disabled={collectingInvoice === invoice.id}
+                        className="px-3 py-1.5 rounded-md bg-emerald-500/20 text-emerald-400 text-xs font-inter font-semibold hover:bg-emerald-500/30 transition-colors disabled:opacity-50 flex items-center gap-1"
+                      >
+                        {collectingInvoice === invoice.id ? (
+                          <div className="w-3 h-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Icon name="payments" className="w-3.5 h-3.5" />
+                        )}
+                        Cobrar y renovar
+                      </button>
+                    )}
+                    {isAdmin && !hasPendingProof && invoice.invoice_type !== 'plan_renewal' && (
+                      <div className="flex gap-1 ml-2">
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedInvoice(invoice); setFormModalOpen(true); }} className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+                          <Icon name="settings" className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </GlassCard>
 
@@ -208,6 +304,16 @@ export default function Payments() {
         message="¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer."
         loading={deleteLoading}
       />
+
+      {reviewProof && (
+        <ProofReviewModal
+          isOpen={!!reviewProof}
+          onClose={() => setReviewProof(null)}
+          proof={reviewProof}
+          onVerified={loadData}
+          invoiceType={reviewInvoiceType}
+        />
+      )}
     </>
   );
 }

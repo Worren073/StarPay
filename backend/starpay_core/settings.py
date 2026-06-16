@@ -27,11 +27,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
     'apps.users.apps.UsersConfig',
     'apps.athletes.apps.AthletesConfig',
     'apps.competitions.apps.CompetitionsConfig',
     'apps.payments.apps.PaymentsConfig',
     'apps.staff.apps.StaffConfig',
+    'apps.notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +65,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'starpay_core.wsgi.application'
+ASGI_APPLICATION = 'starpay_core.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 DATABASES = {
     'default': {
@@ -88,6 +97,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

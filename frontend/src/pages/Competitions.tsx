@@ -6,6 +6,7 @@ import Icon from '../components/ui/Icon';
 import Skeleton from '../components/ui/Skeleton';
 import CompetitionFormModal from '../components/modals/CompetitionFormModal';
 import CompetitionDetailModal from '../components/modals/CompetitionDetailModal';
+import ResultFormModal from '../components/modals/ResultFormModal';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
 import { getCompetitions, getCompetitionResults, deleteCompetition } from '../services/competitionService';
 import type { Competition, Result } from '../types';
@@ -17,6 +18,7 @@ export default function Competitions() {
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(true);
   const [formModalOpen, setFormModalOpen] = useState(false);
+  const [resultModalOpen, setResultModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
@@ -25,9 +27,12 @@ export default function Competitions() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
+  const isCoach = user?.role === 'coach';
+
   const loadCompetitions = async () => {
     try {
-      const comps = await getCompetitions();
+      const params = isCoach ? { coach_assigned: 'true' } : undefined;
+      const comps = await getCompetitions(params);
       setCompetitions(comps);
       const completed = comps.find((c) => c.status === 'completed');
       if (completed) {
@@ -115,9 +120,20 @@ export default function Competitions() {
           <h2 className="font-montserrat text-2xl md:text-3xl font-semibold text-on-surface">Competencias</h2>
           <p className="font-inter text-base text-on-surface-variant mt-1">Gestiona eventos, registra resultados y monitorea la preparación de los atletas.</p>
         </div>
-        {isAdmin && (
-          <Button variant="primary" icon="add" onClick={() => { setSelectedCompetition(null); setFormModalOpen(true); }}>Nuevo evento</Button>
-        )}
+        <div className="flex gap-3">
+          {(user?.role === 'admin' || user?.role === 'coach') && (
+            <Button
+              variant="ghost"
+              icon="emoji_events"
+              onClick={() => setResultModalOpen(true)}
+            >
+              Registrar resultado
+            </Button>
+          )}
+          {isAdmin && (
+            <Button variant="primary" icon="add" onClick={() => { setSelectedCompetition(null); setFormModalOpen(true); }}>Nuevo evento</Button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
@@ -321,6 +337,12 @@ export default function Competitions() {
         competitionId={selectedCompetition?.id || null}
         onEdit={() => selectedCompetition && handleEdit(selectedCompetition)}
         onDelete={() => selectedCompetition && handleDelete(selectedCompetition)}
+      />
+
+      <ResultFormModal
+        isOpen={resultModalOpen}
+        onClose={() => setResultModalOpen(false)}
+        onSuccess={loadCompetitions}
       />
 
       <ConfirmDeleteModal

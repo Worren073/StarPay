@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { createCompetition, updateCompetition } from '../../services/competitionService';
-import type { Competition } from '../../types';
+import Icon from '../ui/Icon';
+import { createCompetition, updateCompetition, getCompetitionCoaches, addCompetitionCoach } from '../../services/competitionService';
+import { getStaff } from '../../services/staffService';
+import type { Competition, StaffMember } from '../../types';
 import { toast } from 'sonner';
+import { useAuth } from '../../context/AuthContext';
 
 interface CompetitionFormModalProps {
   isOpen: boolean;
@@ -19,29 +22,48 @@ export default function CompetitionFormModal({ isOpen, onClose, competition, onS
   const [status, setStatus] = useState('upcoming');
   const [maxAthletes, setMaxAthletes] = useState('');
   const [description, setDescription] = useState('');
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
+  const [selectedCoaches, setSelectedCoaches] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     if (isOpen) {
-      if (competition) {
-        setName(competition.name);
-        setDate(competition.date);
-        setLocation(competition.location);
-        setType(competition.type);
-        setStatus(competition.status);
-        setMaxAthletes(competition.max_athletes.toString());
-        setDescription(competition.description);
-      } else {
-        setName('');
-        setDate('');
-        setLocation('');
-        setType('qualifier');
-        setStatus('upcoming');
-        setMaxAthletes('');
-        setDescription('');
-      }
+      setLoading(true);
+      Promise.all([
+        getStaff().catch(() => [] as StaffMember[]),
+        competition ? getCompetitionCoaches(competition.id).catch(() => []) : Promise.resolve([]),
+      ]).then(([staff, existingCoaches]) => {
+        setStaffMembers(staff);
+        if (competition) {
+          setName(competition.name);
+          setDate(competition.date);
+          setLocation(competition.location);
+          setType(competition.type);
+          setStatus(competition.status);
+          setMaxAthletes(competition.max_athletes.toString());
+          setDescription(competition.description);
+          setSelectedCoaches(existingCoaches.map((c: { staff_member: number }) => c.staff_member));
+        } else {
+          setName('');
+          setDate('');
+          setLocation('');
+          setType('qualifier');
+          setStatus('upcoming');
+          setMaxAthletes('');
+          setDescription('');
+          setSelectedCoaches([]);
+        }
+      }).finally(() => setLoading(false));
     }
   }, [isOpen, competition]);
+
+  const toggleCoach = (id: number) => {
+    setSelectedCoaches((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +78,19 @@ export default function CompetitionFormModal({ isOpen, onClose, competition, onS
         max_athletes: parseInt(maxAthletes),
         description,
       };
+
       if (competition) {
         await updateCompetition(competition.id, data);
+        for (const coachId of selectedCoaches) {
+          try { await addCompetitionCoach(competition.id, coachId); } catch { /* already assigned */ }
+        }
         toast.success('Competencia actualizada correctamente');
       } else {
-        await createCompetition(data);
+        const created = await createCompetition(data);
+        const newId = created.id;
+        for (const coachId of selectedCoaches) {
+          try { await addCompetitionCoach(newId, coachId); } catch { /* skip */ }
+        }
         toast.success('Competencia creada correctamente');
       }
       onSuccess();
@@ -153,6 +183,45 @@ export default function CompetitionFormModal({ isOpen, onClose, competition, onS
             rows={3}
           />
         </div>
+
+        {/* Coach Assignment (admin only) */}
+        {isAdmin && staffMembers.length > 0 && (
+          <div>
+            <label className="block text-sm font-inter text-on-surface-variant mb-2">
+              <Icon name="badge" className="w-4 h-4 inline-block mr-1 text-primary" />
+              Entrenadores asignados
+            </label>
+            <div className="glass-panel rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
+              {staffMembers.map((sm) => (
+                <label
+                  key={sm.id}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    selectedCoaches.includes(sm.id)
+                      ? 'bg-primary/10 border border-primary/30'
+                      : 'hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCoaches.includes(sm.id)}
+                    onChange={() => toggleCoach(sm.id)}
+                    className="w-4 h-4 accent-primary rounded"
+                  />
+                  <div className="flex items-center gap-2 flex-1">
+                    <div className="w-7 h-7 rounded-full bg-surface-variant flex items-center justify-center text-xs font-semibold text-on-surface-variant">
+                      {sm.name.split(' ').map((n) => n[0]).join('')}
+                    </div>
+                    <span className="text-sm font-inter text-on-surface">{sm.name}</span>
+                    <span className="text-xs text-on-surface-variant ml-auto font-inter">
+                      {sm.specialty === 'speed' ? 'Velocidad' : 'Potencia'}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
           <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg glass-panel text-on-surface font-inter text-sm hover:bg-white/10 transition-colors">
             Cancelar

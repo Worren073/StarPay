@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
+import Icon from '../ui/Icon';
 import { createAthlete, updateAthlete } from '../../services/athleteService';
 import { getStaff } from '../../services/staffService';
 import type { Athlete, StaffMember } from '../../types';
@@ -20,13 +21,13 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
   const [speedScore, setSpeedScore] = useState('0');
   const [techniqueScore, setTechniqueScore] = useState('0');
   const [formScore, setFormScore] = useState('0');
-  const [coach, setCoach] = useState('');
-  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
+  const [selectedCoaches, setSelectedCoaches] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      getStaff().then(setStaff).catch(console.error);
+      getStaff().then(setStaffMembers).catch(console.error);
       if (athlete) {
         setName(athlete.name);
         setAge(athlete.age.toString());
@@ -35,7 +36,7 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
         setSpeedScore(athlete.speed_score.toString());
         setTechniqueScore(athlete.technique_score.toString());
         setFormScore(athlete.form_score.toString());
-        setCoach(athlete.coach?.toString() || '');
+        setSelectedCoaches(athlete.coaches || []);
       } else {
         setName('');
         setAge('');
@@ -44,16 +45,22 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
         setSpeedScore('0');
         setTechniqueScore('0');
         setFormScore('0');
-        setCoach('');
+        setSelectedCoaches([]);
       }
     }
   }, [isOpen, athlete]);
+
+  const toggleCoach = (id: number) => {
+    setSelectedCoaches((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = {
+      const data: Record<string, unknown> = {
         name,
         age: parseInt(age),
         level: level as 'elite' | 'pro' | 'beginner',
@@ -62,14 +69,13 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
         speed_score: parseInt(speedScore),
         technique_score: parseInt(techniqueScore),
         form_score: parseInt(formScore),
-        coach: coach ? parseInt(coach) : null,
-        user: null,
+        coaches: selectedCoaches,
       };
       if (athlete) {
         await updateAthlete(athlete.id, data);
         toast.success('Atleta actualizado correctamente');
       } else {
-        await createAthlete(data);
+        await createAthlete({ ...data, user: null });
         toast.success('Atleta creado correctamente');
       }
       onSuccess();
@@ -132,19 +138,45 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
             />
           </div>
         </div>
-        <div>
-          <label className="block text-sm font-inter text-on-surface-variant mb-1">Entrenador</label>
-          <select
-            value={coach}
-            onChange={(e) => setCoach(e.target.value)}
-            className="w-full bg-surface-container/50 border border-white/10 rounded-lg px-3 py-2 text-on-surface font-inter focus:outline-none focus:border-primary transition-colors"
-          >
-            <option value="">Sin asignar</option>
-            {staff.map((s) => (
-              <option key={s.id} value={s.id}>{s.name} - {s.specialty}</option>
-            ))}
-          </select>
-        </div>
+
+        {/* Coach Assignment */}
+        {staffMembers.length > 0 && (
+          <div>
+            <label className="block text-sm font-inter text-on-surface-variant mb-2">
+              <Icon name="badge" className="w-4 h-4 inline-block mr-1 text-primary" />
+              Entrenadores asignados
+            </label>
+            <div className="glass-panel rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
+              {staffMembers.map((sm) => (
+                <label
+                  key={sm.id}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    selectedCoaches.includes(sm.id)
+                      ? 'bg-primary/10 border border-primary/30'
+                      : 'hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCoaches.includes(sm.id)}
+                    onChange={() => toggleCoach(sm.id)}
+                    className="w-4 h-4 accent-primary rounded"
+                  />
+                  <div className="flex items-center gap-2 flex-1">
+                    <div className="w-7 h-7 rounded-full bg-surface-variant flex items-center justify-center text-xs font-semibold text-on-surface-variant">
+                      {sm.name.split(' ').map((n) => n[0]).join('')}
+                    </div>
+                    <span className="text-sm font-inter text-on-surface">{sm.name}</span>
+                    <span className="text-xs text-on-surface-variant ml-auto font-inter">
+                      {sm.specialty === 'speed' ? 'Velocidad' : 'Potencia'}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-inter text-on-surface-variant mb-2">Puntuaciones (0-100)</label>
           <div className="grid grid-cols-3 gap-4">

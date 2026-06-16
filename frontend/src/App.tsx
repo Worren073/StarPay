@@ -14,6 +14,9 @@ import Staff from './pages/Staff';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
+import AthletePayments from './pages/portal/AthletePayments';
+import AthletePerformance from './pages/portal/AthletePerformance';
+import AthleteCompetitions from './pages/portal/AthleteCompetitions';
 
 function ThemeAwareToaster() {
   const { isDark } = useTheme();
@@ -39,6 +42,29 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 }
 
+function AthleteRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (user?.role !== 'athlete') return <Navigate to="/" />;
+  return <>{children}</>;
+}
+
+function AthleteRedirect({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  if (user?.role === 'athlete') {
+    return <Navigate to="/athlete/pagos" />;
+  }
+  return <>{children}</>;
+}
+
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  if (user?.role === 'athlete') {
+    return <Navigate to="/athlete/pagos" />;
+  }
+  return <>{children}</>;
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
@@ -62,11 +88,13 @@ function AnimatedRoutes() {
           path="/"
           element={
             <ProtectedRoute>
-              <Layout>
-                <PageTransition>
-                  <Home />
-                </PageTransition>
-              </Layout>
+              <AthleteRedirect>
+                <Layout>
+                  <PageTransition>
+                    <Home />
+                  </PageTransition>
+                </Layout>
+              </AthleteRedirect>
             </ProtectedRoute>
           }
         />
@@ -74,11 +102,13 @@ function AnimatedRoutes() {
           path="/athletes"
           element={
             <ProtectedRoute>
-              <Layout>
-                <PageTransition>
-                  <Athletes />
-                </PageTransition>
-              </Layout>
+              <AdminRoute>
+                <Layout>
+                  <PageTransition>
+                    <Athletes />
+                  </PageTransition>
+                </Layout>
+              </AdminRoute>
             </ProtectedRoute>
           }
         />
@@ -86,11 +116,13 @@ function AnimatedRoutes() {
           path="/competitions"
           element={
             <ProtectedRoute>
-              <Layout>
-                <PageTransition>
-                  <Competitions />
-                </PageTransition>
-              </Layout>
+              <AdminRoute>
+                <Layout>
+                  <PageTransition>
+                    <Competitions />
+                  </PageTransition>
+                </Layout>
+              </AdminRoute>
             </ProtectedRoute>
           }
         />
@@ -98,11 +130,13 @@ function AnimatedRoutes() {
           path="/payments"
           element={
             <ProtectedRoute>
-              <Layout>
-                <PageTransition>
-                  <Payments />
-                </PageTransition>
-              </Layout>
+              <AdminRoute>
+                <Layout>
+                  <PageTransition>
+                    <Payments />
+                  </PageTransition>
+                </Layout>
+              </AdminRoute>
             </ProtectedRoute>
           }
         />
@@ -110,11 +144,13 @@ function AnimatedRoutes() {
           path="/staff"
           element={
             <ProtectedRoute>
-              <Layout>
-                <PageTransition>
-                  <Staff />
-                </PageTransition>
-              </Layout>
+              <AdminRoute>
+                <Layout>
+                  <PageTransition>
+                    <Staff />
+                  </PageTransition>
+                </Layout>
+              </AdminRoute>
             </ProtectedRoute>
           }
         />
@@ -152,6 +188,42 @@ function AnimatedRoutes() {
                 </PageTransition>
               </Layout>
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/athlete/pagos"
+          element={
+            <AthleteRoute>
+              <Layout>
+                <PageTransition>
+                  <AthletePayments />
+                </PageTransition>
+              </Layout>
+            </AthleteRoute>
+          }
+        />
+        <Route
+          path="/athlete/rendimiento"
+          element={
+            <AthleteRoute>
+              <Layout>
+                <PageTransition>
+                  <AthletePerformance />
+                </PageTransition>
+              </Layout>
+            </AthleteRoute>
+          }
+        />
+        <Route
+          path="/athlete/competencias"
+          element={
+            <AthleteRoute>
+              <Layout>
+                <PageTransition>
+                  <AthleteCompetitions />
+                </PageTransition>
+              </Layout>
+            </AthleteRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" />} />

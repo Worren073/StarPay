@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="emptyPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Abstract figure -->
+  <circle cx="100" cy="70" r="16" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.5" fill="none"/>
+  <path d="M84 100 L84 135 L72 145" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M116 100 L116 135 L128 145" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M84 110 L60 120" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.3" fill="none" stroke-linecap="round"/>
+  <path d="M116 110 L140 120" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.3" fill="none" stroke-linecap="round"/>
+
+  <!-- Skating trail spiral -->
+  <path d="M84 135 C60 140 40 120 50 100 C60 80 90 85 95 105 C100 125 80 135 70 120" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.4" fill="none" stroke-linecap="round"/>
+  <path d="M116 135 C140 140 160 120 150 100 C140 80 110 85 105 105 C100 125 120 135 130 120" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.3" fill="none" stroke-linecap="round"/>
+
+  <!-- Ice base -->
+  <ellipse cx="100" cy="155" rx="60" ry="8" fill="url(#emptyPrimary)" stroke="#06b6d4" stroke-width="0.5" stroke-opacity="0.3"/>
+
+  <!-- Floating sparkles -->
+  <circle cx="50" cy="50" r="2" fill="#06b6d4" fill-opacity="0.4"/>
+  <circle cx="150" cy="60" r="2" fill="#3b82f6" fill-opacity="0.35"/>
+  <circle cx="160" cy="130" r="1.5" fill="#06b6d4" fill-opacity="0.25"/>
+  <circle cx="40" cy="140" r="1.5" fill="#3b82f6" fill-opacity="0.2"/>
+</svg>

@@ -7,8 +7,9 @@ import Skeleton from '../components/ui/Skeleton';
 import SearchInput from '../components/ui/SearchInput';
 import AthleteFormModal from '../components/modals/AthleteFormModal';
 import AthleteDetailModal from '../components/modals/AthleteDetailModal';
+import AthleteAccessModal from '../components/modals/AthleteAccessModal';
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
-import { getAthletes, deleteAthlete } from '../services/athleteService';
+import { getAthletes, deleteAthlete, generateRenewalInvoice } from '../services/athleteService';
 import { showErrorToast } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Athlete } from '../types';
@@ -23,6 +24,7 @@ export default function Athletes() {
   const [searching, setSearching] = useState(false);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [accessModalOpen, setAccessModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -79,6 +81,11 @@ export default function Athletes() {
   const handleCardClick = (athlete: Athlete) => {
     setSelectedAthlete(athlete);
     setDetailModalOpen(true);
+  };
+
+  const handleAccess = (athlete: Athlete) => {
+    setSelectedAthlete(athlete);
+    setAccessModalOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -244,16 +251,36 @@ export default function Athletes() {
                     </div>
                     <div>
                       <h3 className="font-inter text-sm font-bold text-on-surface">{athlete.name}</h3>
-                      <StatusBadge
-                        label={
-                          athlete.level === 'elite'
-                            ? 'Élite'
-                            : athlete.level === 'pro'
-                            ? 'Profesional'
-                            : 'Principiante'
-                        }
-                        variant={athlete.level as 'elite' | 'pro' | 'beginner'}
-                      />
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <StatusBadge
+                          label={
+                            athlete.level === 'elite'
+                              ? 'Élite'
+                              : athlete.level === 'pro'
+                              ? 'Profesional'
+                              : 'Principiante'
+                          }
+                          variant={athlete.level as 'elite' | 'pro' | 'beginner'}
+                        />
+                        {athlete.plan_status && (
+                          <StatusBadge
+                            label={
+                              athlete.plan_status === 'active' && (athlete.days_remaining ?? 0) > 7
+                                ? 'Al día'
+                                : athlete.plan_status === 'expiring'
+                                ? 'Por vencer'
+                                : 'Moroso'
+                            }
+                            variant={
+                              athlete.plan_status === 'active' && (athlete.days_remaining ?? 0) > 7
+                                ? 'active'
+                                : athlete.plan_status === 'expiring'
+                                ? 'pending'
+                                : 'overdue'
+                            }
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
                   {isAdmin && (
@@ -316,6 +343,37 @@ export default function Athletes() {
                       <p className="font-montserrat text-sm font-bold text-on-surface">{athlete.form_score}</p>
                     </div>
                   </div>
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/10 mt-4">
+                    {isAdmin && (
+                      <>
+                        {athlete.plan_status === 'expired' || athlete.plan_status === 'expiring' ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              generateRenewalInvoice(athlete.id)
+                                .then(() => {
+                                  toast.success('Factura de renovación generada');
+                                })
+                                .catch((err) => showErrorToast(err, 'Error al generar factura'));
+                            }}
+                            className="text-sm text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 font-inter"
+                          >
+                            <Icon name="receipt_long" className="w-4 h-4" />
+                            Generar renovación
+                          </button>
+                        ) : null}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAccess(athlete);
+                          }}
+                          className="text-sm text-primary hover:text-primary-fixed transition-colors flex items-center gap-1 font-inter"
+                        >
+                          Gestionar acceso <Icon name="chevron_right" className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </GlassCard>
@@ -359,6 +417,16 @@ export default function Athletes() {
         athleteId={selectedAthlete?.id || null}
         onEdit={() => selectedAthlete && handleEdit(selectedAthlete)}
         onDelete={() => selectedAthlete && handleDelete(selectedAthlete)}
+      />
+
+      <AthleteAccessModal
+        isOpen={accessModalOpen}
+        onClose={() => {
+          setAccessModalOpen(false);
+          setSelectedAthlete(null);
+        }}
+        athleteId={selectedAthlete?.id || null}
+        onSuccess={loadAthletes}
       />
 
       <ConfirmDeleteModal

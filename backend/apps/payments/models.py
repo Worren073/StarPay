@@ -1,4 +1,11 @@
+import uuid
 from django.db import models
+import os
+
+
+def comprobante_upload_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('comprobantes', f'invoice_{instance.invoice.id}_{uuid.uuid4().hex[:8]}.{ext}')
 
 
 class Invoice(models.Model):
@@ -7,10 +14,15 @@ class Invoice(models.Model):
         ('pending', 'Pending'),
         ('overdue', 'Overdue'),
     )
+    INVOICE_TYPE_CHOICES = (
+        ('plan_renewal', 'Renovación de plan'),
+        ('other', 'Otro'),
+    )
 
     athlete = models.ForeignKey('athletes.Athlete', on_delete=models.CASCADE, related_name='invoices')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    invoice_type = models.CharField(max_length=20, choices=INVOICE_TYPE_CHOICES, default='other')
     due_date = models.DateField()
     description = models.CharField(max_length=300, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,3 +47,34 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.reference} - ${self.amount}"
+
+
+class PaymentProof(models.Model):
+    METHOD_CHOICES = (
+        ('pago_movil', 'Pago Móvil'),
+        ('transferencia', 'Transferencia'),
+        ('cash', 'Efectivo'),
+    )
+    ID_TYPE_CHOICES = (
+        ('V', 'Venezolana'),
+        ('E', 'Extranjera'),
+        ('J', 'Jurídica'),
+    )
+
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='proofs')
+    method = models.CharField(max_length=20, choices=METHOD_CHOICES)
+    phone = models.CharField(max_length=20)
+    id_type = models.CharField(max_length=1, choices=ID_TYPE_CHOICES, default='V')
+    id_number = models.CharField(max_length=20)
+    amount_ves = models.DecimalField(max_digits=12, decimal_places=2)
+    reference = models.CharField(max_length=50, blank=True)
+    bank_origin = models.CharField(max_length=100, blank=True)
+    image = models.ImageField(upload_to=comprobante_upload_path, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=Invoice.STATUS_CHOICES, default='pending')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-submitted_at']
+
+    def __str__(self):
+        return f"Proof #{self.id} - Invoice #{self.invoice.id} - {self.get_method_display()}"

@@ -42,3 +42,34 @@ class Result(models.Model):
 
     def __str__(self):
         return f"{self.athlete.name} - #{self.position} in {self.competition.name}"
+
+
+class CompetitionAthlete(models.Model):
+    STATUS_CHOICES = (
+        ('invited', 'Invitado'),
+        ('confirmed', 'Confirmado'),
+        ('participated', 'Participó'),
+    )
+
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='assigned_athletes')
+    athlete = models.ForeignKey('athletes.Athlete', on_delete=models.CASCADE, related_name='competition_assignments')
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='invited')
+
+    class Meta:
+        unique_together = ('competition', 'athlete')
+        verbose_name_plural = 'Competition athletes'
+
+    def __str__(self):
+        return f"{self.athlete.name} - {self.competition.name} ({self.status})"
+
+
+class CompetitionCoach(models.Model):
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='assigned_coaches')
+    staff_member = models.ForeignKey('staff.StaffMember', on_delete=models.CASCADE, related_name='competition_assignments')
+
+    class Meta:
+        unique_together = ('competition', 'staff_member')
+        verbose_name_plural = 'Competition coaches'
+
+    def __str__(self):
+        return f"{self.staff_member.name} - {self.competition.name}"

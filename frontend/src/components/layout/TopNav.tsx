@@ -1,14 +1,16 @@
 import { useState, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../ui/Icon';
-import { navItems } from './Sidebar';
+import { adminNavItems, athleteNavItems } from './Sidebar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import useNotifications from '../../hooks/useNotifications';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function TopNav() {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const location = useLocation();
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifClosing, setNotifClosing] = useState(false);
@@ -68,14 +70,6 @@ export default function TopNav() {
     setMobileMenuOpen(false);
   }, []);
 
-  const notifications = [
-    { id: 1, text: 'Nuevo pago recibido de Juan M.', time: 'Hace 5 min', read: false },
-    { id: 2, text: 'Competencia "Regional Qualifiers" se acerca', time: 'Hace 1 hora', read: false },
-    { id: 3, text: 'Sofía R. completó su inscripción', time: 'Hace 2 horas', read: true },
-  ];
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
   const notifVisible = notifOpen || notifClosing;
   const settingsVisible = settingsOpen || settingsClosing;
   const notifAnimClass = notifClosing ? 'dropdown-animate-out' : 'dropdown-animate-in';
@@ -132,21 +126,41 @@ export default function TopNav() {
                 onMouseEnter={handleNotifEnter}
                 onMouseLeave={handleNotifLeave}
               >
-                <div className={`p-4 border-b ${isDark ? 'border-white/10' : 'border-black/10'}`}>
+                <div className={`p-4 border-b flex items-center justify-between ${isDark ? 'border-white/10' : 'border-black/10'}`}>
                   <h3 className="font-montserrat text-sm font-semibold text-on-surface">Notificaciones</h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={markAllAsRead}
+                      className="text-xs text-primary hover:text-primary/80 font-inter transition-colors"
+                    >
+                      Marcar todo leído
+                    </button>
+                  )}
                 </div>
                 <div className="max-h-64 overflow-y-auto">
-                  {notifications.map((notif) => (
-                    <div
-                      key={notif.id}
-                      className={`p-3 border-b ${isDark ? 'border-white/5 hover:bg-white/5' : 'border-black/5 hover:bg-black/5'} transition-colors ${
-                        !notif.read ? (isDark ? 'bg-white/[0.03]' : 'bg-black/[0.02]') : ''
-                      }`}
-                    >
-                      <p className="text-sm text-on-surface font-inter">{notif.text}</p>
-                      <p className="text-xs text-on-surface-variant mt-1 font-inter">{notif.time}</p>
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center">
+                      <p className="text-sm text-on-surface-variant font-inter">Sin notificaciones</p>
                     </div>
-                  ))}
+                  ) : (
+                    notifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        onClick={() => !notif.is_read && markAsRead(notif.id)}
+                        className={`p-3 border-b cursor-pointer ${isDark ? 'border-white/5 hover:bg-white/5' : 'border-black/5 hover:bg-black/5'} transition-colors ${
+                          !notif.is_read ? (isDark ? 'bg-white/[0.03]' : 'bg-black/[0.02]') : ''
+                        }`}
+                      >
+                        <p className="text-sm text-on-surface font-inter">{notif.title}</p>
+                        <p className="text-xs text-on-surface-variant mt-1 font-inter">{notif.message}</p>
+                        <p className="text-xs text-on-surface-variant/60 mt-0.5 font-inter">
+                          {new Date(notif.created_at).toLocaleDateString('es-ES', {
+                            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
@@ -281,25 +295,47 @@ export default function TopNav() {
           >
             <div className={`p-4 border-b flex items-center justify-between ${isDark ? 'border-white/10' : 'border-black/10'}`}>
               <h3 className="font-montserrat text-sm font-semibold text-on-surface">Notificaciones</h3>
-              <button
-                onClick={closeNotif}
-                className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-white/10"
-              >
-                <Icon name="cancel" className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="text-xs text-primary hover:text-primary/80 font-inter"
+                  >
+                    Leer todo
+                  </button>
+                )}
+                <button
+                  onClick={closeNotif}
+                  className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-white/10"
+                >
+                  <Icon name="cancel" className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <div className="max-h-64 overflow-y-auto">
-              {notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className={`p-3 border-b ${isDark ? 'border-white/5' : 'border-black/5'} ${
-                    !notif.read ? (isDark ? 'bg-white/[0.03]' : 'bg-black/[0.02]') : ''
-                  }`}
-                >
-                  <p className="text-sm text-on-surface font-inter">{notif.text}</p>
-                  <p className="text-xs text-on-surface-variant mt-1 font-inter">{notif.time}</p>
+              {notifications.length === 0 ? (
+                <div className="p-6 text-center">
+                  <p className="text-sm text-on-surface-variant font-inter">Sin notificaciones</p>
                 </div>
-              ))}
+              ) : (
+                notifications.map((notif) => (
+                  <div
+                    key={notif.id}
+                    onClick={() => !notif.is_read && markAsRead(notif.id)}
+                    className={`p-3 border-b cursor-pointer ${isDark ? 'border-white/5' : 'border-black/5'} ${
+                      !notif.is_read ? (isDark ? 'bg-white/[0.03]' : 'bg-black/[0.02]') : ''
+                    }`}
+                  >
+                    <p className="text-sm text-on-surface font-inter">{notif.title}</p>
+                    <p className="text-xs text-on-surface-variant mt-1 font-inter">{notif.message}</p>
+                    <p className="text-xs text-on-surface-variant/60 mt-0.5 font-inter">
+                      {new Date(notif.created_at).toLocaleDateString('es-ES', {
+                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </motion.div>
         )}
@@ -421,7 +457,7 @@ export default function TopNav() {
 
               {/* Nav Items */}
               <nav className="flex flex-col gap-1 p-3">
-                {navItems.map((item) => {
+                {(user?.role === 'athlete' ? athleteNavItems : adminNavItems).map((item) => {
                   const isActive = location.pathname === item.path;
                   return (
                     <Link
