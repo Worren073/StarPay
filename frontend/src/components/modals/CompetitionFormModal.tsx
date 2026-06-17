@@ -103,7 +103,7 @@ export default function CompetitionFormModal({ isOpen, onClose, competition, onS
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={competition ? 'Editar competencia' : 'Nueva competencia'} size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title={competition ? 'Editar competencia 🏆' : 'Nueva competencia 🏆'} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-inter text-on-surface-variant mb-1">Nombre</label>

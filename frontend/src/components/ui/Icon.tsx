@@ -110,7 +110,21 @@ interface IconProps {
   solid?: boolean;
 }
 
+const emojiMap: Record<string, string> = {
+  skate: '⛸️',
+  skating_trophy: '🏆',
+  skating_star: '⭐',
+  skating_snow: '❄️',
+  speed_emoji: '⚡',
+  technique_emoji: '🎯',
+  form_emoji: '💃',
+  skate_coin: '⛸️💰',
+};
+
 export default function Icon({ name, className = 'w-6 h-6', solid = false }: IconProps) {
+  if (emojiMap[name]) {
+    return <span className={className} style={{ lineHeight: 1 }}>{emojiMap[name]}</span>;
+  }
   const key = solid ? `${name}_solid` : name;
   const IconComponent = iconMap[key] || iconMap[name] || HomeIcon;
   return <IconComponent className={className} />;

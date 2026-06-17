@@ -46,7 +46,7 @@ export default function ProgressFormModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Registrar progreso" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="Registrar progreso 📈" size="md">
       <form onSubmit={handleSubmit} className="space-y-6">
         <p className="font-inter text-sm text-on-surface-variant">
           Registrando progreso para: <span className="font-semibold text-on-surface">{athleteName}</span>

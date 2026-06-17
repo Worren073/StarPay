@@ -13,7 +13,7 @@
   <!-- Abstract ice rink shape -->
   <ellipse cx="400" cy="350" rx="320" ry="180" fill="url(#heroPrimary)" stroke="#06b6d4" stroke-width="0.5" stroke-opacity="0.2"/>
 
-  <!-- Decorative arc - skating trail -->
+  <!-- Decorative arcs - skating trails -->
   <path d="M120 420 Q250 300 400 320 Q550 340 680 280" stroke="#06b6d4" stroke-width="2" stroke-opacity="0.4" fill="none" stroke-linecap="round"/>
   <path d="M150 440 Q280 320 400 340 Q520 360 650 300" stroke="#3b82f6" stroke-width="1.5" stroke-opacity="0.3" fill="none" stroke-linecap="round"/>
 

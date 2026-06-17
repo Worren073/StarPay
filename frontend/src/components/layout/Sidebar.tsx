@@ -34,12 +34,13 @@ export default function Sidebar() {
               </linearGradient>
             </defs>
             <path d="M50 15 L58 35 L80 35 L62 48 L70 70 L50 56 L30 70 L38 48 L20 35 L42 35 Z" fill="url(#starGrad)" />
-            <path d="M20 85 Q50 75 80 85" fill="none" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round" />
+            <path d="M20 85 Q35 90 50 82 Q65 74 80 85" fill="none" stroke="#4cd7f6" strokeWidth="3" strokeLinecap="round" />
+            <path d="M25 82 Q40 70 55 78" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
           </svg>
         </div>
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden whitespace-nowrap">
           <h2 className="font-montserrat text-sm font-bold text-primary">StarPay</h2>
-          <p className="text-xs text-on-surface-variant">Elite Performance</p>
+          <p className="text-xs text-on-surface-variant">Elite Performance ⛸️</p>
         </div>
       </div>
 

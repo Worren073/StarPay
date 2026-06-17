@@ -59,6 +59,13 @@
   --font-family-montserrat: 'Montserrat', sans-serif;
   --font-family-inter: 'Inter', sans-serif;
 
+  --color-border-subtle: var(--border-subtle-val);
+  --color-bg-hover: var(--bg-hover-val);
+  --color-bg-active: var(--bg-active-val);
+  --color-score-card: var(--score-card-bg);
+  --color-score-card-border: var(--score-card-border);
+  --color-progress-track: var(--progress-track-bg);
+
   --spacing-sidebar-collapsed: 80px;
   --spacing-sidebar-expanded: 260px;
   --spacing-container-padding-mobile: 1.25rem;
@@ -84,6 +91,13 @@
   --color-inverse-on-surface-val: #233143;
   --color-outline-base: #869397;
   --color-outline-variant-base: #3d494c;
+
+  --border-subtle-val: rgba(255, 255, 255, 0.12);
+  --bg-hover-val: rgba(255, 255, 255, 0.08);
+  --bg-active-val: rgba(255, 255, 255, 0.12);
+  --score-card-bg: rgba(0, 0, 0, 0.30);
+  --score-card-border: rgba(255, 255, 255, 0.05);
+  --progress-track-bg: rgba(0, 0, 0, 0.40);
 }
 
 html.light {
@@ -99,11 +113,18 @@ html.light {
   --color-surface-variant-val: #dce0e4;
   --color-on-bg-base: #1a1a2e;
   --color-on-surface-base: #1a1a2e;
-  --color-on-surface-variant-base: #5f6368;
+  --color-on-surface-variant-base: #44474e;
   --color-inverse-surface-val: #1a1a2e;
   --color-inverse-on-surface-val: #f5f7fa;
   --color-outline-base: #9aa0a6;
   --color-outline-variant-base: #dadce0;
+
+  --border-subtle-val: rgba(0, 0, 0, 0.12);
+  --bg-hover-val: rgba(0, 0, 0, 0.06);
+  --bg-active-val: rgba(0, 0, 0, 0.08);
+  --score-card-bg: rgba(0, 0, 0, 0.04);
+  --score-card-border: rgba(0, 0, 0, 0.08);
+  --progress-track-bg: rgba(136, 136, 136, 0.25);
 }
 
 body {

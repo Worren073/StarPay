@@ -297,13 +297,13 @@ export default function AthleteDetailModal({
             )}
 
             {/* Meta Info */}
-            <div className="text-xs text-on-surface-variant font-inter flex gap-4 pt-2 border-t border-white/10">
+            <div className="text-xs text-on-surface-variant font-inter flex gap-4 pt-2 border-t border-border-subtle">
               <span>Creado: {new Date(athlete.created_at).toLocaleDateString('es-ES')}</span>
               <span>Actualizado: {new Date(athlete.updated_at).toLocaleDateString('es-ES')}</span>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+            <div className="flex gap-3 justify-end pt-4 border-t border-border-subtle">
               <button
                 type="button"
                 onClick={onClose}

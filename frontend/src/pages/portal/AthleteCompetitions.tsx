@@ -140,14 +140,14 @@ export default function AthleteCompetitions() {
           </div>
         </div>
         {showActions && (
-          <div className="flex gap-3 mt-4 pt-3 border-t border-white/10">
+          <div className="flex gap-3 mt-4 pt-3 border-t border-border-subtle">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleAccept(a);
               }}
               disabled={accepting === a.id}
-              className="flex-1 px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 font-inter text-sm font-semibold hover:bg-emerald-500/30 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+              className="flex-1 px-3 py-2 rounded-lg bg-emerald-500/20 text-emerald-500 font-inter text-sm font-semibold hover:bg-emerald-500/30 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
               {accepting === a.id ? (
                 <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
@@ -161,7 +161,7 @@ export default function AthleteCompetitions() {
                 e.stopPropagation();
                 setDeclineTarget(a);
               }}
-              className="flex-1 px-3 py-2 rounded-lg bg-red-500/20 text-red-400 font-inter text-sm font-semibold hover:bg-red-500/30 transition-colors flex items-center justify-center gap-1.5"
+              className="flex-1 px-3 py-2 rounded-lg bg-red-500/20 text-red-500 font-inter text-sm font-semibold hover:bg-red-500/30 transition-colors flex items-center justify-center gap-1.5"
             >
               <Icon name="close" className="w-4 h-4" />
               Rechazar
@@ -175,7 +175,7 @@ export default function AthleteCompetitions() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mis Competencias</h2>
+        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mis Competencias 🏆⛸️</h2>
         <p className="font-inter text-base text-on-surface-variant">
           {assignments.length > 0
             ? `${assignments.length} competencia${assignments.length !== 1 ? 's' : ''}`
@@ -187,7 +187,7 @@ export default function AthleteCompetitions() {
         <div>
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
             <Icon name="mail" className="w-5 h-5 text-amber-500" />
-            Invitaciones pendientes
+            Invitaciones pendientes 📬
           </h3>
           <div className="space-y-3">
             {invited.map((a) => renderCard(a, true))}
@@ -199,7 +199,7 @@ export default function AthleteCompetitions() {
         <div>
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
             <Icon name="check_circle" className="w-5 h-5 text-emerald-500" />
-            Competencias aceptadas
+            Competencias aceptadas ✅
           </h3>
           <div className="space-y-3">
             {accepted.map((a) => renderCard(a, false))}
@@ -211,7 +211,7 @@ export default function AthleteCompetitions() {
         <div>
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
             <Icon name="block" className="w-5 h-5 text-red-500" />
-            Competencias declinadas
+            Competencias declinadas ❌
           </h3>
           <div className="space-y-3">
             {declined.map((a) => renderCard(a, false))}

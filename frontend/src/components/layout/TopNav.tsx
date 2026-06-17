@@ -101,7 +101,7 @@ export default function TopNav() {
           : 'bg-white/60 border-black/10 text-primary'
       }`}>
         <div className="flex items-center gap-4">
-          <span className="font-montserrat font-bold text-xl text-primary">StarPay</span>
+          <span className="font-montserrat font-bold text-xl text-primary">StarPay ⛸️</span>
         </div>
         <div className="flex items-center gap-4">
           {/* Notifications */}
@@ -258,7 +258,7 @@ export default function TopNav() {
           >
             <Icon name="menu" className="w-6 h-6" />
           </button>
-          <span className="font-montserrat font-bold text-lg text-primary">StarPay</span>
+          <span className="font-montserrat font-bold text-lg text-primary">StarPay ⛸️</span>
         </div>
         <div className="flex items-center gap-1">
           {/* Notifications */}
@@ -440,7 +440,8 @@ export default function TopNav() {
                       </linearGradient>
                     </defs>
                     <path d="M50 15 L58 35 L80 35 L62 48 L70 70 L50 56 L30 70 L38 48 L20 35 L42 35 Z" fill="url(#starGradMobile)" />
-                    <path d="M20 85 Q50 75 80 85" fill="none" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round" />
+                    <path d="M20 85 Q35 90 50 82 Q65 74 80 85" fill="none" stroke="#4cd7f6" strokeWidth="3" strokeLinecap="round" />
+                    <path d="M25 82 Q40 70 55 78" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
                   </svg>
                 </div>
                 <div>

@@ -117,7 +117,7 @@ export default function Competitions() {
     <>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h2 className="font-montserrat text-2xl md:text-3xl font-semibold text-on-surface">Competencias</h2>
+          <h2 className="font-montserrat text-2xl md:text-3xl font-semibold text-on-surface">Competencias 🏆⛸️</h2>
           <p className="font-inter text-base text-on-surface-variant mt-1">Gestiona eventos, registra resultados y monitorea la preparación de los atletas.</p>
         </div>
         <div className="flex gap-3">
@@ -140,16 +140,16 @@ export default function Competitions() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 flex flex-col gap-6">
           <div className="flex items-center justify-between glass-panel px-6 py-4 rounded-xl">
-            <h3 className="font-montserrat text-xl font-semibold text-on-surface flex items-center gap-2">
-              <Icon name="calendar_month" className="w-6 h-6 text-primary" />
-              Próximos eventos
+              <h3 className="font-montserrat text-xl font-semibold text-on-surface flex items-center gap-2">
+                <Icon name="calendar_month" className="w-6 h-6 text-primary" />
+                Próximos eventos 
             </h3>
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-md transition-colors border font-inter text-sm ${
                   viewMode === 'list'
-                    ? 'bg-white/5 text-primary border-primary/30'
+                    ? 'bg-bg-active text-primary border-primary/30'
                     : 'bg-transparent text-on-surface-variant hover:text-primary border-transparent'
                 }`}
               >
@@ -159,7 +159,7 @@ export default function Competitions() {
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-md transition-colors border font-inter text-sm ${
                   viewMode === 'grid'
-                    ? 'bg-white/5 text-primary border-primary/30'
+                    ? 'bg-bg-active text-primary border-primary/30'
                     : 'bg-transparent text-on-surface-variant hover:text-primary border-transparent'
                 }`}
               >
@@ -174,7 +174,7 @@ export default function Competitions() {
               {competitions.map((comp) => (
                 <GlassCard key={comp.id} className="flex flex-col md:flex-row gap-6 relative overflow-hidden group">
                   <div className={`absolute top-0 left-0 w-1 h-full ${getTypeColor(comp.type)}`}></div>
-                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-lg bg-surface-container/50 border border-white/5">
+                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-24 h-24 rounded-lg bg-surface-container/50 border border-border-subtle">
                     <span className="font-montserrat text-xl font-bold text-primary">{new Date(comp.date).getDate()}</span>
                     <span className="text-xs text-on-surface-variant uppercase tracking-widest font-inter">
                       {new Date(comp.date).toLocaleString('es', { month: 'short' })}
@@ -194,7 +194,7 @@ export default function Competitions() {
                     <h4 className="font-montserrat text-xl font-semibold text-on-surface mb-1">{comp.name}</h4>
                     <p className="font-inter text-base text-on-surface-variant line-clamp-1">{comp.description}</p>
                   </div>
-                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0 min-w-[120px]">
+                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center border-t md:border-t-0 md:border-l border-border-subtle pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0 min-w-[120px]">
                     <div className="text-center md:text-right">
                       <div className="font-montserrat text-2xl font-bold text-primary">{comp.results_count}</div>
                       <div className="text-xs text-on-surface-variant font-inter">Resultados</div>
@@ -247,11 +247,11 @@ export default function Competitions() {
                         <h4 className="font-montserrat text-lg font-semibold text-on-surface mb-1">{comp.name}</h4>
                         <p className="font-inter text-sm text-on-surface-variant line-clamp-1">{comp.location}</p>
                       </div>
-                      <div className="flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-surface-container/50 border border-white/5">
+                      <div className="flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-surface-container/50 border border-border-subtle">
                         <span className="font-montserrat text-lg font-bold text-primary">{new Date(comp.date).getDate()}</span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                    <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
                       <div className="flex items-center gap-2">
                         <Icon name="emoji_events" className="w-4 h-4 text-secondary" />
                         <span className="text-sm text-on-surface-variant font-inter">{comp.results_count} resultados</span>
@@ -272,7 +272,7 @@ export default function Competitions() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-montserrat text-xl font-semibold text-on-surface flex items-center gap-2">
                 <Icon name="star" className="w-6 h-6 text-secondary-container" />
-                Resultados recientes
+                Resultados recientes 🏅
               </h3>
             </div>
             {results.length > 0 && (
@@ -283,13 +283,13 @@ export default function Competitions() {
                 <div className="flex flex-col gap-3">
                   {results.slice(0, 3).map((result, i) => (
                     <div key={result.id} className={`flex items-center gap-3 p-3 rounded-lg ${
-                      i === 0 ? 'bg-white/5 border border-white/5' : 'hover:bg-white/5 transition-colors'
+                      i === 0 ? 'bg-bg-active border border-border-subtle' : 'hover:bg-bg-hover transition-colors'
                     }`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-inter font-bold text-sm ${
-                        i === 0 ? 'bg-secondary-container/20 border border-secondary text-secondary' :
-                        'bg-surface-variant text-on-surface-variant'
-                      }`}>
-                        {result.position}
+                       <div className={`w-8 h-8 rounded-full flex items-center justify-center font-inter font-bold text-sm ${
+                         i === 0 ? 'bg-secondary-container/20 border border-secondary text-secondary' :
+                         'bg-surface-variant text-on-surface-variant'
+                       }`}>
+                         {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : result.position}
                       </div>
                       <div className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant text-xs font-inter">
                         {result.athlete_name.split(' ').map((n) => n[0]).join('')}
@@ -311,7 +311,7 @@ export default function Competitions() {
 
           <GlassCard className="relative overflow-hidden">
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/10 blur-[40px] rounded-full pointer-events-none"></div>
-            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-4">Resumen de temporada</h3>
+            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-4">Resumen de temporada 🏆</h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <span className="font-inter text-base text-on-surface-variant">Total de eventos</span>

@@ -88,7 +88,7 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={athlete ? 'Editar atleta' : 'Nuevo atleta'} size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title={athlete ? 'Editar atleta ⛸️' : 'Nuevo atleta ⛸️'} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>

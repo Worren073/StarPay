@@ -43,7 +43,7 @@ export default function AthletePerformance() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mi Rendimiento</h2>
+        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mi Rendimiento ⛸️📈</h2>
         <p className="font-inter text-base text-on-surface-variant">
           Evolución de tus estadísticas de rendimiento
         </p>
@@ -53,7 +53,7 @@ export default function AthletePerformance() {
         <div className="glass-panel rounded-xl p-5">
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
             <Icon name="person" className="w-5 h-5 text-primary" />
-            Mi Perfil
+            Mi Perfil ⛸️
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
@@ -88,7 +88,7 @@ export default function AthletePerformance() {
         <div className="glass-panel rounded-xl p-5">
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
             <Icon name="badge" className="w-5 h-5 text-primary" />
-            Mis Entrenadores
+            Mis Entrenadores 👟
           </h3>
           <div className="space-y-3">
             {profile.coach_names.map((name, i) => (
@@ -123,15 +123,15 @@ export default function AthletePerformance() {
       {profile && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass-panel rounded-xl p-4 text-center">
-            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">Velocidad</p>
+            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">⚡ Velocidad</p>
             <p className="font-montserrat text-3xl font-bold text-secondary-container">{profile.speed_score}</p>
           </div>
           <div className="glass-panel rounded-xl p-4 text-center">
-            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">Técnica</p>
+            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">🎯 Técnica</p>
             <p className="font-montserrat text-3xl font-bold text-primary">{profile.technique_score}</p>
           </div>
           <div className="glass-panel rounded-xl p-4 text-center">
-            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">Forma</p>
+            <p className="text-xs text-on-surface-variant font-inter uppercase tracking-wider mb-2">💃 Forma</p>
             <p className="font-montserrat text-3xl font-bold text-on-surface">{profile.form_score}</p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function AthletePerformance() {
       {/* Progress Chart */}
       {chartData.length > 0 && (
         <div className="glass-panel rounded-xl p-5">
-          <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-4">Evolución</h3>
+          <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-4">Evolución 📊</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>

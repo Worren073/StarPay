@@ -68,7 +68,7 @@ export default function InvoiceFormModal({ isOpen, onClose, invoice, onSuccess }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={invoice ? 'Editar factura' : 'Nueva factura'}>
+    <Modal isOpen={isOpen} onClose={onClose} title={invoice ? 'Editar factura 📄' : 'Nueva factura 📄'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-inter text-on-surface-variant mb-1">Atleta</label>

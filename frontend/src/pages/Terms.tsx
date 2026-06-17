@@ -21,7 +21,7 @@ export default function Terms() {
             <Icon name="description" className="w-6 h-6 text-secondary" />
           </div>
           <div>
-            <h1 className="font-montserrat text-2xl md:text-3xl font-bold text-on-surface">Términos de servicio</h1>
+            <h1 className="font-montserrat text-2xl md:text-3xl font-bold text-on-surface">Términos de servicio ⛸️</h1>
             <p className="text-on-surface-variant font-inter text-sm mt-1">Última actualización: Enero 2024</p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function Terms() {
             </p>
           </section>
 
-          <div className="pt-6 mt-6 border-t border-white/10">
+          <div className="pt-6 mt-6 border-t border-border-subtle">
             <p className="text-xs text-on-surface-variant font-inter">
               © 2024 StarPay Patinaje Élite. Todos los derechos reservados.
             </p>

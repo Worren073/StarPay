@@ -16,8 +16,8 @@ import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 
 const specialtyLabels: Record<string, string> = {
-  speed: 'Velocidad',
-  power: 'Potencia',
+  speed: '⚡ Velocidad',
+  power: '💪 Potencia',
 };
 
 export default function Staff() {
@@ -130,7 +130,7 @@ export default function Staff() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
           <h1 className="font-montserrat text-2xl md:text-3xl font-semibold text-on-surface mb-2">
-            Personal y entrenadores
+            Personal y entrenadores 👟⛸️
           </h1>
           <p className="font-inter text-base text-on-surface-variant">
             {hasActiveFilters
@@ -153,7 +153,7 @@ export default function Staff() {
                 onClick={() => setFilter(f)}
                 className={`px-4 py-1.5 rounded-md font-inter text-sm transition-colors ${
                   filter === f
-                    ? 'bg-white/10 text-primary shadow-sm'
+                    ? 'bg-bg-active text-primary shadow-sm'
                     : 'text-on-surface-variant hover:text-on-surface'
                 }`}
               >
@@ -179,7 +179,7 @@ export default function Staff() {
       {staff.length === 0 && !loading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-24 h-24 rounded-full bg-surface-variant/30 flex items-center justify-center mb-6">
-            <Icon name="group" className="w-12 h-12 text-on-surface-variant" />
+            <span className="w-12 h-12 text-on-surface-variant text-4xl">👟</span>
           </div>
           <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-2">
             {hasActiveFilters ? 'No se encontraron miembros del personal' : 'No hay personal registrado'}
@@ -253,13 +253,13 @@ export default function Staff() {
                   <div className="flex gap-1">
                     <button
                       onClick={() => handleEdit(member)}
-                      className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
+                      className="w-7 h-7 rounded-full hover:bg-bg-hover flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"
                     >
                       <Icon name="settings" className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(member)}
-                      className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
+                      className="w-7 h-7 rounded-full hover:bg-bg-hover flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path
@@ -274,7 +274,7 @@ export default function Staff() {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6 mt-2">
-                <div className="bg-surface-variant/30 rounded-lg p-3 border border-white/5">
+                <div className="bg-surface-variant/30 rounded-lg p-3 border border-border-subtle">
                   <div className="text-on-surface-variant text-xs mb-1 flex items-center gap-1 font-inter">
                     <Icon name="group" className="w-3.5 h-3.5" /> Atletas
                   </div>
@@ -282,7 +282,7 @@ export default function Staff() {
                     {member.athletes_count}
                   </div>
                 </div>
-                <div className="bg-surface-variant/30 rounded-lg p-3 border border-white/5">
+                <div className="bg-surface-variant/30 rounded-lg p-3 border border-border-subtle">
                   <div className="text-on-surface-variant text-xs mb-1 flex items-center gap-1 font-inter">
                     <Icon name="schedule" className="w-3.5 h-3.5" /> Próxima sesión
                   </div>
@@ -292,7 +292,7 @@ export default function Staff() {
                 </div>
               </div>
 
-              <div className="mt-auto flex items-center justify-between pt-4 border-t border-white/10">
+              <div className="mt-auto flex items-center justify-between pt-4 border-t border-border-subtle">
                 <StatusBadge
                   label={
                     member.status === 'in_facility'

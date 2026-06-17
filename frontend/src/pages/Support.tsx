@@ -16,7 +16,7 @@ export default function Support() {
       </button>
 
       <div className="text-center mb-8">
-        <h1 className="font-montserrat text-2xl md:text-3xl font-bold text-on-surface mb-2">Soporte y ayuda</h1>
+        <h1 className="font-montserrat text-2xl md:text-3xl font-bold text-on-surface mb-2">Soporte y ayuda ⛸️</h1>
         <p className="text-on-surface-variant font-inter text-base">Estamos aquí para ayudarte</p>
       </div>
 
@@ -36,7 +36,7 @@ export default function Support() {
             </p>
             <a
               href="#"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 font-inter text-sm font-semibold hover:bg-emerald-500/30 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-600 font-inter text-sm font-semibold hover:bg-emerald-500/30 transition-colors"
               onClick={(e) => e.preventDefault()}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ export default function Support() {
             </p>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-emerald-400 text-sm font-semibold font-inter">Óptimo</span>
+              <span className="text-emerald-600 text-sm font-semibold font-inter">Óptimo</span>
             </div>
           </div>
         </GlassCard>
@@ -142,7 +142,7 @@ export default function Support() {
         </div>
       </div>
 
-      <div className="pt-6 mt-8 border-t border-white/10 text-center">
+      <div className="pt-6 mt-8 border-t border-border-subtle text-center">
         <p className="text-xs text-on-surface-variant font-inter">
           © 2024 StarPay Patinaje Élite. Todos los derechos reservados.
         </p>

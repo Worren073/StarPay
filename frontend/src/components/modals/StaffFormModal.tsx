@@ -66,7 +66,7 @@ export default function StaffFormModal({ isOpen, onClose, staffMember, onSuccess
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={staffMember ? 'Editar miembro' : 'Nuevo miembro'}>
+    <Modal isOpen={isOpen} onClose={onClose} title={staffMember ? 'Editar miembro 👟' : 'Nuevo miembro 👟'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-inter text-on-surface-variant mb-1">Nombre</label>

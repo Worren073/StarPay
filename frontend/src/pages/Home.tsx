@@ -194,9 +194,9 @@ export default function Home() {
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="font-montserrat text-3xl md:text-5xl font-bold text-on-background mb-2">
-            Bienvenido, <span className="text-primary">Entrenador</span>
+            Bienvenido, <span className="text-primary">Entrenador</span> 
           </h1>
-          <p className="font-inter text-lg text-on-surface-variant">Aquí está tu resumen de rendimiento de hoy.</p>
+          <p className="font-inter text-lg text-on-surface-variant">Aquí está tu resumen de rendimiento de hoy. </p>
         </div>
         <div className="flex gap-4 mb-4">
           {isAdmin && (
@@ -213,7 +213,7 @@ export default function Home() {
           <MetricCard
             title="Atletas activos"
             value={activeAthletes}
-            icon="directions_run"
+            icon="group"
             badge={{ label: `${athletes.length} en total`, variant: 'positive' }}
           />
           <MetricCard
@@ -233,11 +233,11 @@ export default function Home() {
         </div>
 
         <div className="md:col-span-4 glass-panel p-6 rounded-xl flex flex-col gap-4">
-          <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-2">Acciones rápidas</h3>
+          <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-2">Acciones rápidas ⚡</h3>
           {isAdmin && (
             <button
               onClick={() => setAthleteModalOpen(true)}
-              className="w-full bg-surface-container-high hover:bg-surface-variant border border-white/10 rounded-lg p-4 flex items-center justify-between transition-colors group"
+              className="w-full bg-surface-container-high hover:bg-surface-variant border border-border-subtle rounded-lg p-4 flex items-center justify-between transition-colors group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
@@ -251,7 +251,7 @@ export default function Home() {
           {isAdmin && (
             <button
               onClick={() => setCompetitionModalOpen(true)}
-              className="w-full bg-surface-container-high hover:bg-surface-variant border border-white/10 rounded-lg p-4 flex items-center justify-between transition-colors group"
+              className="w-full bg-surface-container-high hover:bg-surface-variant border border-border-subtle rounded-lg p-4 flex items-center justify-between transition-colors group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
@@ -264,7 +264,7 @@ export default function Home() {
           )}
           <button
             onClick={handleExportReport}
-            className="w-full bg-surface-container-high hover:bg-surface-variant border border-white/10 rounded-lg p-4 flex items-center justify-between transition-colors group"
+            className="w-full bg-surface-container-high hover:bg-surface-variant border border-border-subtle rounded-lg p-4 flex items-center justify-between transition-colors group"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
@@ -276,15 +276,15 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="md:col-span-8 glass-panel p-6 rounded-xl">
+        <div className="md:col-span-8 glass-panel p-6 mb-6 rounded-xl">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-montserrat text-xl font-semibold text-on-surface">Actividad reciente</h3>
+            <h3 className="font-montserrat text-xl font-semibold text-on-surface">Actividad reciente ⏱️</h3>
             <button onClick={() => navigate('/athletes')} className="text-xs text-primary hover:underline font-inter">Ver todo</button>
           </div>
           <div className="flex flex-col gap-4">
             {recentActivity.map((item, i) => (
               <div key={i}>
-                <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors">
+                <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-bg-hover transition-colors">
                   <div className={`w-10 h-10 rounded-full ${item.bg} flex items-center justify-center ${item.color} shrink-0`}>
                     <Icon name={item.icon} className="w-5 h-5" />
                   </div>
@@ -295,7 +295,7 @@ export default function Home() {
                   {item.badge && <StatusBadge label={item.badge} variant={item.badgeVariant} />}
                   {item.amount && <span className="font-inter text-sm text-on-surface font-semibold">{item.amount}</span>}
                 </div>
-                {i < recentActivity.length - 1 && <div className="w-full h-[1px] bg-white/10"></div>}
+                {i < recentActivity.length - 1 && <div className="w-full h-[1px] bg-border-subtle"></div>}
               </div>
             ))}
           </div>
@@ -306,13 +306,13 @@ export default function Home() {
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #4cd7f6 0, #4cd7f6 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }}></div>
           <div className="relative z-10 p-6 flex flex-col h-full justify-end">
             <div className="w-12 h-12 rounded-xl bg-primary/20 backdrop-blur-md flex items-center justify-center text-primary mb-4 border border-primary/30">
-              <Icon name="speed" className="w-7 h-7" />
+              <Icon name="add" className="w-7 h-7" />
             </div>
-            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-2 leading-tight">Eleva tu programa</h3>
+            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-2 leading-tight">Eleva tu programa </h3>
             <p className="font-inter text-base text-on-surface-variant mb-6">Desbloquea módulos avanzados de seguimiento biomecánico para tus patinadores élite.</p>
             <button
               onClick={() => navigate('/athletes')}
-              className="glass-panel w-full py-3 rounded-lg font-inter text-sm text-primary font-semibold hover:bg-white/10 transition-colors border-primary/30"
+              className="glass-panel w-full py-3 rounded-lg font-inter text-sm text-primary font-semibold hover:bg-bg-hover transition-colors border-primary/30"
             >
               Explorar módulos
             </button>
@@ -322,17 +322,17 @@ export default function Home() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 md:mb-10">
         <div className="lg:col-span-2 glass-panel p-6 rounded-xl">
-          <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Tendencia de ingresos</h3>
+            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Tendencia de ingresos 📈</h3>
           <RevenueChart invoices={invoices} />
         </div>
         <div className="glass-panel p-6 rounded-xl">
-          <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Estado de pagos</h3>
+            <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Estado de pagos 💰</h3>
           <PaymentStatusChart invoices={invoices} />
         </div>
       </div>
 
       <div className="glass-panel p-6 rounded-xl mb-4 md:mb-6">
-        <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Atletas por nivel</h3>
+        <h3 className="font-montserrat text-xl font-semibold text-on-surface mb-6">Atletas por nivel ⛸️</h3>
         <AthletesByLevelChart athletes={athletes} />
       </div>
 

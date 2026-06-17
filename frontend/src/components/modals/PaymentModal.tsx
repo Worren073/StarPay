@@ -83,7 +83,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Realizar Pago" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="Realizar Pago ⛸️💰" size="md">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="glass-panel rounded-lg p-4 space-y-1">
           <p className="text-sm text-on-surface-variant font-inter">Factura #{invoice.id}</p>

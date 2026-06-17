@@ -103,11 +103,14 @@ export default function PlanProgressBar({ plan, loading, athleteId, hasPendingRe
         </div>
       </div>
 
-      <div className="h-3 w-full bg-surface-variant rounded-full overflow-hidden">
+      <div className="h-3 w-full bg-surface-variant rounded-full overflow-hidden relative">
         <div
           className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
           style={{ width: `${Math.min(100, plan.progress_percentage)}%` }}
         />
+        {plan.progress_percentage > 10 && (
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 text-sm">⛸️</span>
+        )}
       </div>
 
       {showRenewButton && (
@@ -124,8 +127,7 @@ export default function PlanProgressBar({ plan, loading, athleteId, hasPendingRe
             </>
           ) : (
             <>
-              <Icon name="refresh" className="w-4 h-4" />
-              Renovar plan
+              ⛸️ Renovar plan
             </>
           )}
         </button>

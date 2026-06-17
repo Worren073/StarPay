@@ -73,7 +73,7 @@ export default function AthletePayments() {
       />
 
       <div>
-        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mis Pagos</h2>
+        <h2 className="font-montserrat text-3xl md:text-4xl font-bold text-on-surface mb-2">Mis Pagos ⛸️💰</h2>
         <p className="font-inter text-base text-on-surface-variant">
           {pendingInvoices.length > 0
             ? `Tienes ${pendingInvoices.length} pago${pendingInvoices.length !== 1 ? 's' : ''} pendiente${pendingInvoices.length !== 1 ? 's' : ''}`
@@ -94,7 +94,7 @@ export default function AthletePayments() {
                   <p className="font-inter font-semibold text-on-surface">{inv.description || 'Sin descripción'}</p>
                   <p className="text-sm text-on-surface-variant font-inter mt-1">
                     {inv.invoice_type === 'plan_renewal' && (
-                      <span className="inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 text-xs font-semibold mr-2">
+                      <span className="inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 text-xs font-semibold mr-2">
                         Renovación de plan
                       </span>
                     )}
@@ -127,7 +127,7 @@ export default function AthletePayments() {
         <div>
           <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-3 flex items-center gap-2">
             <Icon name="check_circle" className="w-5 h-5 text-emerald-500" />
-            Historial de Pagos
+            Historial de Pagos 📄
           </h3>
           <div className="space-y-3">
             {paidInvoices.map((inv) => (
