@@ -20,11 +20,11 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     environment:
-      - SECRET_KEY=django-insecure-docker-dev-key-!@#123
+      - SECRET_KEY=Ansg94ukdfOFV-kTAvON0x-6XZ6z7R_m8mm3iL57ZT_hnTqr5tzPY2pCPwt2C66EW5c
       - DEBUG=True
       - DB_NAME=starpay_db
       - DB_USER=postgres
-      - DB_PASSWORD=${DB_PASSWORD:-123456}
+      - DB_PASSWORD=${DB_PASSWORD:rZWzU_qOQRwa3HUjrzTvRHSRv_U}
       - DB_HOST=db
       - DB_PORT=5432
       - ALLOWED_HOSTS=localhost,127.0.0.1,backend
