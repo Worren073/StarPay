@@ -1,6 +1,9 @@
+const statusBadgeVariants = ['active', 'inactive', 'pending', 'overdue', 'paid', 'elite', 'pro', 'beginner', 'on_ice', 'in_facility', 'off_duty', 'upcoming', 'ongoing', 'completed', 'qualifier', 'championship', 'exhibition', 'positive', 'warning', 'error'] as const;
+type StatusBadgeVariant = typeof statusBadgeVariants[number];
+
 interface StatusBadgeProps {
   label: string;
-  variant?: 'active' | 'inactive' | 'pending' | 'overdue' | 'paid' | 'elite' | 'pro' | 'beginner' | 'on_ice' | 'in_facility' | 'off_duty' | 'upcoming' | 'ongoing' | 'completed' | 'qualifier' | 'championship' | 'exhibition';
+  variant?: StatusBadgeVariant;
 }
 
 const variantStyles: Record<string, string> = {
@@ -21,6 +24,9 @@ const variantStyles: Record<string, string> = {
   qualifier: 'bg-secondary-container/20 text-secondary border-secondary/30',
   championship: 'bg-secondary-container/20 text-secondary border-secondary/30',
   exhibition: 'bg-tertiary/20 text-tertiary-fixed-dim border-tertiary/30',
+  positive: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+  warning: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  error: 'bg-error-container/20 text-error border-error-container/30',
 };
 
 const variantEmoji: Record<string, string> = {

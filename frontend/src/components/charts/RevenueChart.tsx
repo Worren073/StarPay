@@ -1,7 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { Invoice } from '../../types';
 import { useExchangeRate } from '../../hooks/useExchangeRate';
-import { formatBoth } from '../../services/rateService';
 
 interface RevenueChartProps {
   invoices: Invoice[];
@@ -45,7 +44,7 @@ export default function RevenueChart({ invoices }: RevenueChartProps) {
             borderRadius: '8px',
             color: '#d4e4fa',
           }}
-          formatter={(value: number) => [formatBoth(value), 'Ingresos']}
+          formatter={(value: number) => [formatBoth(value), 'Ingresos'] as [React.ReactNode, React.ReactNode]}
         />
         <Area
           type="monotone"

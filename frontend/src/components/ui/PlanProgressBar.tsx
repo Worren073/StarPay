@@ -38,7 +38,6 @@ export default function PlanProgressBar({ plan, loading, athleteId, hasPendingRe
 
   const isExpired = plan.status === 'expired';
   const isWarning = plan.status === 'expiring';
-  const isNormal = plan.status === 'active';
 
   const barColor = isExpired
     ? 'bg-red-500'

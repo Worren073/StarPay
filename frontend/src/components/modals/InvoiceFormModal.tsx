@@ -48,6 +48,7 @@ export default function InvoiceFormModal({ isOpen, onClose, invoice, onSuccess }
         athlete: parseInt(athlete),
         amount: amount,
         status: status as 'paid' | 'pending' | 'overdue',
+        invoice_type: 'other' as const,
         due_date: dueDate,
         description,
       };

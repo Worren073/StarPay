@@ -30,7 +30,7 @@ export const getCompetitionResults = async (id: number): Promise<Result[]> => {
   return response.data;
 };
 
-export const addResult = async (competitionId: number, data: Omit<Result, 'id' | 'athlete_name'>): Promise<Result> => {
+export const addResult = async (competitionId: number, data: Omit<Result, 'id' | 'athlete_name' | 'competition'>): Promise<Result> => {
   const response = await api.post(`/competitions/${competitionId}/results/`, data);
   return response.data;
 };

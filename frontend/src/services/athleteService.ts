@@ -16,7 +16,7 @@ export const getAthlete = async (id: number): Promise<Athlete> => {
   return response.data;
 };
 
-export const createAthlete = async (data: Omit<Athlete, 'id' | 'created_at' | 'updated_at' | 'coach_names'>): Promise<Athlete> => {
+export const createAthlete = async (data: Omit<Athlete, 'id' | 'created_at' | 'updated_at' | 'coach_names' | 'plan_status' | 'days_remaining'>): Promise<Athlete> => {
   const response = await api.post('/athletes/', data);
   return response.data;
 };

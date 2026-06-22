@@ -118,7 +118,8 @@ export default function Payments() {
       toast.success('Pago en efectivo registrado y plan renovado');
       loadData();
     } catch (err) {
-      const msg = (err as any)?.response?.data?.error || (err as any)?.response?.data && Object.values((err as any).response.data)[0]?.[0] || 'Error al procesar pago en efectivo';
+      const errData = (err as any)?.response?.data;
+      const msg = errData?.error || (errData && (Object.values(errData) as string[])[0]?.[0]) || 'Error al procesar pago en efectivo';
       toast.error(msg);
     } finally {
       setCollectingInvoice(null);
