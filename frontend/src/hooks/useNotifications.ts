@@ -10,7 +10,9 @@ let globalWs: WebSocket | null = null;
 
 function getWsUrl(): string {
   const token = localStorage.getItem('access_token') || '';
-  const base = import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:8000`;
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const host = import.meta.env.DEV ? `${window.location.hostname}:8000` : window.location.host;
+  const base = import.meta.env.VITE_WS_URL || `${protocol}//${host}`;
   return `${base}/ws/notifications/?token=${token}`;
 }
 
