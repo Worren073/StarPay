@@ -44,7 +44,7 @@ export default function RevenueChart({ invoices }: RevenueChartProps) {
             borderRadius: '8px',
             color: '#d4e4fa',
           }}
-          formatter={(value: number) => [formatBoth(value), 'Ingresos'] as [React.ReactNode, React.ReactNode]}
+          formatter={((value: number) => [formatBoth(value), 'Ingresos']) as any}
         />
         <Area
           type="monotone"

@@ -60,7 +60,7 @@ export default function AthleteFormModal({ isOpen, onClose, athlete, onSuccess }
     e.preventDefault();
     setLoading(true);
     try {
-      const data: Record<string, unknown> = {
+      const data = {
         name,
         age: parseInt(age),
         level: level as 'elite' | 'pro' | 'beginner',
