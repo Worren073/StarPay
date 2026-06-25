@@ -1,6 +1,7 @@
+import base64
+import os
 import uuid
 from django.db import models
-import os
 
 
 def comprobante_upload_path(instance, filename):
@@ -69,7 +70,7 @@ class PaymentProof(models.Model):
     amount_ves = models.DecimalField(max_digits=12, decimal_places=2)
     reference = models.CharField(max_length=50, blank=True)
     bank_origin = models.CharField(max_length=100, blank=True)
-    image = models.ImageField(upload_to=comprobante_upload_path, null=True, blank=True)
+    image = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=Invoice.STATUS_CHOICES, default='pending')
     submitted_at = models.DateTimeField(auto_now_add=True)
 

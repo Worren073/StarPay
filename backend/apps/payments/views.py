@@ -1,3 +1,4 @@
+import base64
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -55,6 +56,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         is_cash = data.get('method') == 'cash' and request.user.role == 'admin'
         if is_cash:
             data['status'] = 'paid'
+
+        image_file = request.FILES.get('image')
+        if image_file:
+            content_type = image_file.content_type or 'image/jpeg'
+            data['image'] = f'data:{content_type};base64,{base64.b64encode(image_file.read()).decode("utf-8")}'
 
         serializer = PaymentProofSerializer(data=data)
         serializer.is_valid(raise_exception=True)
