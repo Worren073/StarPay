@@ -37,14 +37,14 @@ export default function Payments() {
 
   const loadData = async () => {
     try {
-      const [invData, summaryData, txnData] = await Promise.all([
-        getInvoices(),
-        getPaymentSummary(),
-        getTransactions(),
-      ]);
+      const promises = [getInvoices(), getTransactions()] as const;
+      const [invData, txnData] = await Promise.all(promises);
       setInvoices(invData);
-      setSummary(summaryData);
       setTransactions(txnData);
+      if (isAdmin) {
+        const summaryData = await getPaymentSummary();
+        setSummary(summaryData);
+      }
 
       // Fetch proofs for pending invoices
       const pendingInvs = invData.filter((inv) => inv.status === 'pending');
@@ -158,47 +158,49 @@ export default function Payments() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <GlassCard glow>
-          <div className="flex justify-between items-start mb-4">
-            <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Total recaudado</span>
-            <Icon name="account_balance_wallet" className="w-6 h-6 text-primary-container" />
-          </div>
-          <div>
-            <div className="font-montserrat text-3xl md:text-5xl font-bold text-secondary-container mb-1">
-              {formatBoth(summary?.total_collected ?? 0)}
+      {isAdmin && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <GlassCard glow>
+            <div className="flex justify-between items-start mb-4">
+              <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Total recaudado</span>
+              <Icon name="account_balance_wallet" className="w-6 h-6 text-primary-container" />
             </div>
-          </div>
-        </GlassCard>
+            <div>
+              <div className="font-montserrat text-3xl md:text-5xl font-bold text-secondary-container mb-1">
+                {formatBoth(summary?.total_collected ?? 0)}
+              </div>
+            </div>
+          </GlassCard>
 
-        <GlassCard>
-          <div className="flex justify-between items-start mb-4">
-            <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Pendiente</span>
-            <Icon name="pending_actions" className="w-6 h-6 text-error-container" />
-          </div>
-          <div>
-            <div className="font-montserrat text-2xl font-bold text-on-surface mb-1">
-              {formatBoth(summary?.outstanding ?? 0)}
+          <GlassCard>
+            <div className="flex justify-between items-start mb-4">
+              <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Pendiente</span>
+              <Icon name="pending_actions" className="w-6 h-6 text-error-container" />
             </div>
-            <div className="text-xs text-on-surface-variant flex items-center font-inter">
-              <Icon name="schedule" className="w-4 h-4 mr-1" />
-              {summary?.pending_invoices_count} facturas pendientes
+            <div>
+              <div className="font-montserrat text-2xl font-bold text-on-surface mb-1">
+                {formatBoth(summary?.outstanding ?? 0)}
+              </div>
+              <div className="text-xs text-on-surface-variant flex items-center font-inter">
+                <Icon name="schedule" className="w-4 h-4 mr-1" />
+                {summary?.pending_invoices_count} facturas pendientes
+              </div>
             </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
 
-        <GlassCard>
-          <div className="flex justify-between items-start mb-4">
-            <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Vencido</span>
-            <Icon name="warning" className="w-6 h-6 text-error" />
-          </div>
-          <div>
-            <div className="font-montserrat text-2xl font-bold text-error mb-1">
-              {formatBoth(summary?.overdue_amount ?? 0)}
+          <GlassCard>
+            <div className="flex justify-between items-start mb-4">
+              <span className="font-inter text-sm text-on-surface-variant uppercase tracking-wider">Vencido</span>
+              <Icon name="warning" className="w-6 h-6 text-error" />
             </div>
-          </div>
-        </GlassCard>
-      </div>
+            <div>
+              <div className="font-montserrat text-2xl font-bold text-error mb-1">
+                {formatBoth(summary?.overdue_amount ?? 0)}
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <GlassCard className="lg:col-span-2">

@@ -28,11 +28,12 @@ export default function ResultFormModal({ isOpen, onClose, onSuccess }: ResultFo
     if (isOpen) {
       setLoading(true);
       Promise.all([
+        getCompetitions({ status: 'upcoming' }),
         getCompetitions({ status: 'ongoing' }),
         getAthletes({ status: 'active' }),
       ])
-        .then(([comps, ats]) => {
-          setCompetitions(comps);
+        .then(([upcoming, ongoing, ats]) => {
+          setCompetitions([...upcoming, ...ongoing]);
           setAthletes(ats);
         })
         .catch(() => toast.error('Error al cargar datos'))

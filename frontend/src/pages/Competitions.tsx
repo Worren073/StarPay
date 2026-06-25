@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import GlassCard from '../components/ui/GlassCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import Button from '../components/ui/Button';
@@ -28,6 +28,15 @@ export default function Competitions() {
   const isAdmin = user?.role === 'admin';
 
   const isCoach = user?.role === 'coach';
+
+  const yearProgress = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 1);
+    const end = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+    const total = end.getTime() - start.getTime();
+    const elapsed = now.getTime() - start.getTime();
+    return Math.round((elapsed / total) * 100);
+  }, []);
 
   const loadCompetitions = async () => {
     try {
@@ -317,8 +326,12 @@ export default function Competitions() {
                 <span className="font-inter text-base text-on-surface-variant">Total de eventos</span>
                 <span className="font-montserrat text-xl font-semibold text-on-surface">{competitions.length}</span>
               </div>
-              <div className="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
-                <div className="h-full bg-primary w-[45%] shadow-[0_0_8px_#06b6d4]"></div>
+              <div className="flex items-center justify-between">
+                <span className="font-inter text-xs text-on-surface-variant">Progreso del año</span>
+                <span className="font-inter text-xs text-on-surface-variant">{yearProgress}%</span>
+              </div>
+              <div className="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+                <div className="h-full bg-primary rounded-full transition-all duration-700" style={{ width: `${yearProgress}%` }}></div>
               </div>
             </div>
           </GlassCard>
