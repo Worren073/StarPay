@@ -20,4 +20,4 @@ COPY backend/ .
 COPY --from=frontend-build /app/frontend/dist /app/frontend_dist
 
 EXPOSE 8000
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && python seed.py && uvicorn starpay_core.asgi:application --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && uvicorn starpay_core.asgi:application --host 0.0.0.0 --port 8000"]
