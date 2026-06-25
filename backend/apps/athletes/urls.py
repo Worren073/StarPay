@@ -11,5 +11,6 @@ urlpatterns = [
     path('me/payments/', MeViewSet.as_view({'get': 'payments'}), name='me-payments'),
     path('me/plan/', MeViewSet.as_view({'get': 'plan'}), name='me-plan'),
     path('me/competitions/', MeViewSet.as_view({'get': 'competitions'}), name='me-competitions'),
+    path('me/results/', MeViewSet.as_view({'get': 'results'}), name='me-results'),
     path('', include(router.urls)),
 ]

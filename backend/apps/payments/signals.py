@@ -21,6 +21,20 @@ def notify_payment_submitted(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Invoice)
+def notify_invoice_created(sender, instance, created, **kwargs):
+    if not created:
+        return
+    if instance.athlete.user:
+        send_notification(
+            user=instance.athlete.user,
+            notification_type='invoice_created',
+            title='Nueva factura',
+            message=f'Se ha generado una nueva factura por ${instance.amount}: {instance.description}',
+            link='/athlete/pagos',
+        )
+
+
+@receiver(post_save, sender=Invoice)
 def notify_invoice_status_change(sender, instance, created, **kwargs):
     if created:
         return

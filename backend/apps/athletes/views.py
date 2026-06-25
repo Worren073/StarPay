@@ -7,8 +7,8 @@ from .models import Athlete, AthleteProgress, Plan, AthletePlan
 from .serializers import AthleteSerializer, AthleteProgressSerializer, AthleteProfileSerializer, PlanSerializer, AthletePlanSerializer
 from apps.payments.models import Invoice
 from apps.payments.serializers import InvoiceSerializer
-from apps.competitions.models import CompetitionAthlete
-from apps.competitions.serializers import CompetitionAthleteSerializer
+from apps.competitions.models import CompetitionAthlete, Result
+from apps.competitions.serializers import CompetitionAthleteSerializer, ResultSerializer
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -202,4 +202,13 @@ class MeViewSet(viewsets.GenericViewSet):
             return Response([], status=200)
         assignments = CompetitionAthlete.objects.filter(athlete=athlete).select_related('competition')
         serializer = CompetitionAthleteSerializer(assignments, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def results(self, request):
+        athlete = self.get_athlete(request)
+        if not athlete:
+            return Response([], status=200)
+        results = Result.objects.filter(athlete=athlete).select_related('competition').order_by('-competition__date')
+        serializer = ResultSerializer(results, many=True)
         return Response(serializer.data)

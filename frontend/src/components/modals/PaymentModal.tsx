@@ -24,7 +24,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
   const [phone, setPhone] = useState('');
   const [idType, setIdType] = useState<'V' | 'E' | 'J'>('V');
   const [idNumber, setIdNumber] = useState('');
-  const [amountVes, setAmountVes] = useState('');
+  const [selectedAmount, setSelectedAmount] = useState(false);
   const [reference, setReference] = useState('');
   const [bankOrigin, setBankOrigin] = useState('');
   const [image, setImage] = useState<File | null>(null);
@@ -46,6 +46,10 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
       toast.error('Debes adjuntar el comprobante de pago');
       return;
     }
+    if (!selectedAmount) {
+      toast.error('Debes seleccionar el monto a pagar');
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -54,7 +58,7 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
       formData.append('phone', phone);
       formData.append('id_type', idType);
       formData.append('id_number', idNumber);
-      formData.append('amount_ves', amountVes);
+      formData.append('amount_ves', selectedAmount ? invoice.amount : '');
       formData.append('reference', reference);
       formData.append('bank_origin', bankOrigin);
       formData.append('image', image);
@@ -130,16 +134,18 @@ export default function PaymentModal({ isOpen, onClose, invoice, onSuccess }: Pa
             />
           </div>
           <div>
-            <label className="block text-xs font-inter text-on-surface-variant mb-1">Monto en VES</label>
-            <input
-              type="text"
-              value={amountVes}
-              onChange={(e) => setAmountVes(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-on-surface font-inter text-sm focus:outline-none focus:border-primary"
-              placeholder="0.00"
-              maxLength={14}
-              required
-            />
+            <label className="block text-xs font-inter text-on-surface-variant mb-1">Monto total de la factura</label>
+            <button
+              type="button"
+              onClick={() => setSelectedAmount(!selectedAmount)}
+              className={`w-full px-3 py-3 rounded-lg border text-sm font-inter font-semibold transition-all ${
+                selectedAmount
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-white/10 text-on-surface-variant hover:border-white/20'
+              }`}
+            >
+              {formatBoth(parseFloat(invoice.amount))}
+            </button>
           </div>
         </div>
 

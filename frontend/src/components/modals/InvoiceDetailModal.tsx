@@ -77,7 +77,7 @@ export default function InvoiceDetailModal({ isOpen, onClose, invoice, proofs, i
                 {proof.image && (
                   <div className="rounded-lg overflow-hidden border border-white/10 bg-black/20">
                     <img
-                      src={proof.image.startsWith('http') ? proof.image : `http://127.0.0.1:8000${proof.image}`}
+                      src={proof.image.startsWith('http') ? proof.image : `${window.location.origin}${proof.image}`}
                       alt="Comprobante de pago"
                       className="w-full max-h-80 object-contain"
                     />

@@ -16,6 +16,7 @@ class Notification(models.Model):
         ('athlete_assigned', 'Atleta asignado'),
         ('competition_reminder', 'Recordatorio de competencia'),
         ('competition_response', 'Respuesta a invitación'),
+        ('invoice_created', 'Nueva factura'),
     )
 
     recipient = models.ForeignKey(

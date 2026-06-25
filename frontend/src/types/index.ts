@@ -66,6 +66,8 @@ export interface Result {
   competition: number;
   athlete: number;
   athlete_name: string;
+  competition_name: string;
+  competition_date: string;
   score: string;
   position: number;
   category: string;

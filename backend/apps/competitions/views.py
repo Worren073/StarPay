@@ -29,17 +29,17 @@ class CompetitionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Competition.objects.all()
+        user = self.request.user
+        if user.is_authenticated and user.role == 'coach':
+            staff = getattr(user, 'staffmember', None)
+            if staff:
+                qs = qs.filter(assigned_coaches__staff_member=staff).distinct()
         comp_type = self.request.query_params.get('type')
         comp_status = self.request.query_params.get('status')
-        coach_assigned = self.request.query_params.get('coach_assigned')
         if comp_type:
             qs = qs.filter(type=comp_type)
         if comp_status:
             qs = qs.filter(status=comp_status)
-        if coach_assigned == 'true' and self.request.user.is_authenticated:
-            staff_member = getattr(self.request.user, 'staffmember', None)
-            if staff_member:
-                qs = qs.filter(assigned_coaches__staff_member=staff_member)
         return qs
 
     @action(detail=True, methods=['get', 'post'], url_path='results')

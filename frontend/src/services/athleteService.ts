@@ -1,5 +1,5 @@
 import api from './api';
-import type { Athlete, AthleteProgress, AthleteProfile, AthletePlan, Invoice, CompetitionAthlete, Plan } from '../types';
+import type { Athlete, AthleteProgress, AthleteProfile, AthletePlan, Invoice, CompetitionAthlete, Plan, Result } from '../types';
 
 export const getAthletes = async (params?: {
   level?: string;
@@ -56,6 +56,11 @@ export const getMyProgress = async (): Promise<AthleteProgress[]> => {
 
 export const getMyPayments = async (): Promise<Invoice[]> => {
   const response = await api.get('/athletes/me/payments/');
+  return response.data;
+};
+
+export const getMyResults = async (): Promise<Result[]> => {
+  const response = await api.get('/athletes/me/results/');
   return response.data;
 };
 

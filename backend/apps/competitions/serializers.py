@@ -4,6 +4,8 @@ from .models import Competition, Result, CompetitionAthlete, CompetitionCoach
 
 class ResultSerializer(serializers.ModelSerializer):
     athlete_name = serializers.CharField(source='athlete.name', read_only=True)
+    competition_name = serializers.CharField(source='competition.name', read_only=True)
+    competition_date = serializers.DateField(source='competition.date', read_only=True)
     competition = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:

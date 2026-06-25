@@ -3,20 +3,22 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import Icon from '../../components/ui/Icon';
 import StatusBadge from '../../components/ui/StatusBadge';
 import Skeleton from '../../components/ui/Skeleton';
-import { getMyProfile, getMyProgress } from '../../services/athleteService';
+import { getMyProfile, getMyProgress, getMyResults } from '../../services/athleteService';
 import { showErrorToast } from '../../services/api';
-import type { AthleteProfile, AthleteProgress } from '../../types';
+import type { AthleteProfile, AthleteProgress, Result } from '../../types';
 
 export default function AthletePerformance() {
   const [profile, setProfile] = useState<AthleteProfile | null>(null);
   const [progressData, setProgressData] = useState<AthleteProgress[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getMyProfile(), getMyProgress()])
-      .then(([prof, prog]) => {
+    Promise.all([getMyProfile(), getMyProgress(), getMyResults()])
+      .then(([prof, prog, res]) => {
         setProfile(prof);
         setProgressData(prog);
+        setResults(res);
       })
       .catch((err) => showErrorToast(err, 'Error al cargar rendimiento'))
       .finally(() => setLoading(false));
@@ -174,6 +176,49 @@ export default function AthletePerformance() {
           <p className="font-inter text-sm text-on-surface-variant text-center max-w-md">
             Aún no hay registros de progreso. Tu entrenador los agregará después de las sesiones.
           </p>
+        </div>
+      )}
+
+      {/* Recent Results */}
+      {results.length > 0 && (
+        <div className="glass-panel rounded-xl p-5">
+          <h3 className="font-montserrat text-lg font-semibold text-on-surface mb-4 flex items-center gap-2">
+            <Icon name="emoji_events" className="w-5 h-5 text-amber-500" />
+            Últimos Resultados 🏆
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm font-inter">
+              <thead>
+                <tr className="text-left text-on-surface-variant border-b border-border-subtle">
+                  <th className="pb-2 font-medium">Competencia</th>
+                  <th className="pb-2 font-medium">Fecha</th>
+                  <th className="pb-2 font-medium">Categoría</th>
+                  <th className="pb-2 font-medium">Puntaje</th>
+                  <th className="pb-2 font-medium">Posición</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((r) => (
+                  <tr key={r.id} className="border-b border-border-subtle/50">
+                    <td className="py-2.5 text-on-surface">{r.competition_name}</td>
+                    <td className="py-2.5 text-on-surface-variant">{new Date(r.competition_date).toLocaleDateString('es-ES')}</td>
+                    <td className="py-2.5 text-on-surface-variant">{r.category}</td>
+                    <td className="py-2.5 text-on-surface font-semibold">{r.score}</td>
+                    <td className="py-2.5">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        r.position === 1 ? 'bg-amber-500/20 text-amber-500' :
+                        r.position === 2 ? 'bg-gray-400/20 text-gray-400' :
+                        r.position === 3 ? 'bg-orange-500/20 text-orange-500' :
+                        'bg-surface-variant/50 text-on-surface-variant'
+                      }`}>
+                        {r.position === 1 ? '🥇' : r.position === 2 ? '🥈' : r.position === 3 ? '🥉' : `#${r.position}`}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

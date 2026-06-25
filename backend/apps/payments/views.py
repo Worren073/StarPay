@@ -17,6 +17,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Invoice.objects.select_related('athlete')
+        user = self.request.user
+        if user.is_authenticated and user.role == 'coach':
+            staff = getattr(user, 'staffmember', None)
+            if staff:
+                qs = qs.filter(athlete__coaches=staff)
         invoice_status = self.request.query_params.get('status')
         if invoice_status:
             qs = qs.filter(status=invoice_status)
